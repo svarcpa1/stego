@@ -25,6 +25,7 @@ public class Crypto {
         //TODO has to be created new???
         cryptoImage = image.getNewImage(sourceImage);
         //add encrypted text to source image
+        cryptoImage = addTextLengthToImage(cryptoImage, textToHide);
         cryptoImage = addTextToImage(cryptoImage, textToHide);
 
         //creates file
@@ -65,7 +66,11 @@ public class Crypto {
         initialShift = 32;
         byte[] imageByteArray = this.image.getBytesFromImage(image);
         byte[] textByteArray = text.getBytesFromText(message);
-        //byte[] textLengthByteArray = text.getTextLengh(textByteArray.length);
+        //byte[] textLengthByteArray = text.getTextLength(message.length());
+
+        if (imageByteArray.length < textByteArray.length) {
+            throw new IllegalArgumentException("Image is too small for the text");
+        }
 
         //TODO isn't message too long?
         for(int i = 0; i<textByteArray.length; i++){
@@ -80,10 +85,32 @@ public class Crypto {
         return image;
     }
 
+    public BufferedImage addTextLengthToImage(BufferedImage image, String message){
+        initialShift = 0;
+        byte[] imageByteArray = this.image.getBytesFromImage(image);
+        byte[] textByteArray = text.getBytesFromText(message);
+        //TODO isn't here mistake? use ^.length
+        byte[] textLengthByteArray = text.getTextLength(textByteArray.length);
+
+        for(int i = 0; i<textLengthByteArray.length; i++){
+
+            for(int j = 7; j>=0; j--){
+
+                //TODO simplify the code
+                imageByteArray[initialShift] =
+                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textLengthByteArray[i] >>> j) & 1);
+                initialShift++;
+            }
+        }
+        return image;
+    }
+
     public byte[] extractTextFromImage(BufferedImage image){
         initialShift=32;
         byte[] imageByteArray = this.image.getBytesFromImage(image);
-        byte[] result = new byte[100];
+        //size of return array depends on length of hidden text
+        int textLength = extractTextLength(imageByteArray);
+        byte[] result = new byte[textLength];
 
         for(int i=0; i<result.length; i++)
         {
@@ -95,5 +122,14 @@ public class Crypto {
             }
         }
         return result;
+    }
+
+    public int extractTextLength(byte[] image){
+        int textLength = 0;
+        //first four bytes holding length
+        for (int i = 0; i<32; i++){
+            textLength = (textLength << 1) | (image[i] & 1);
+        }
+        return textLength;
     }
 }

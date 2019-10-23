@@ -15,9 +15,9 @@ public class Main {
 
         URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
 
-        String textToHide = "Michal je chytrý kluk";
-        //crypto.code(pathSource, textToHide, sourceMode);
-        crypto.codeURL(url, textToHide, sourceMode);
+        String textToHide = "Michal je chytrý kluk jako buk";
+        crypto.code(pathSource, textToHide, sourceMode);
+        //crypto.codeURL(url, textToHide, sourceMode);
         System.out.println(crypto.decode(pathDecode));
     }
 }
