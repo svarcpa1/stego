@@ -68,7 +68,7 @@ public class Crypto {
         byte[] textByteArray = text.getBytesFromText(message);
         //byte[] textLengthByteArray = text.getTextLength(message.length());
 
-        if (imageByteArray.length < textByteArray.length) {
+        if (imageByteArray.length + (initialShift/8) < textByteArray.length) {
             throw new IllegalArgumentException("Image is too small for the text");
         }
 
