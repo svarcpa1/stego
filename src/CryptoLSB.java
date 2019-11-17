@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 
-public class Crypto {
+public class CryptoLSB {
 
     private Image image = new Image();
     private Text text = new Text();
@@ -15,7 +15,7 @@ public class Crypto {
     private BufferedImage sourceImage;
     private BufferedImage cryptoImage;
 
-    public Crypto() {
+    public CryptoLSB() {
     }
 
     public void code (@NotNull Path path, String textToHide, int sourceMode) throws Exception {
@@ -89,7 +89,6 @@ public class Crypto {
         initialShift = 0;
         byte[] imageByteArray = this.image.getBytesFromImage(image);
         byte[] textByteArray = text.getBytesFromText(message);
-        //TODO isn't here mistake? use ^.length
         byte[] textLengthByteArray = text.getTextLength(textByteArray.length);
 
         for(int i = 0; i<textLengthByteArray.length; i++){

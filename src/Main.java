@@ -6,18 +6,22 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Crypto crypto = new Crypto();
+        CryptoLSB cryptoLSB = new CryptoLSB();
+        CryptoDCT cryptoDCT = new CryptoDCT();
         int sourceMode = 1;
 
         //squares
         Path pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\lenna.png");
         Path pathDecode = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\lenna_output.png");
 
-        URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
+        URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article" +
+                "/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
 
         String textToHide = "Michal je chytrý kluk jako buk";
-        crypto.code(pathSource, textToHide, sourceMode);
+        //cryptoLSB.code(pathSource, textToHide, sourceMode);
         //crypto.codeURL(url, textToHide, sourceMode);
-        System.out.println(crypto.decode(pathDecode));
+        //System.out.println(cryptoLSB.decode(pathDecode));
+
+        cryptoDCT.codeDCT(pathSource);
     }
 }
