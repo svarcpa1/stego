@@ -25,15 +25,19 @@ public class CryptoDCT {
         cryptoImage = image.getNewImage(sourceImage);
         blocksOfImage = image.getBlocksOfImage(cryptoImage);
         double[][] DTCTransformMatrixR, DTCTransformMatrixG, DTCTransformMatrixB;
+        int[][] quantiseMatrixR, quantiseMatrixG, quantiseMatrixB;
 
         for (BufferedImage bi : blocksOfImage) {
 
             ArrayList<Array2D> matrixPixelsBands = image.getMatrixPixelsBands(bi);
             DTCTransformMatrixR = getDTCTransformMatrix(matrixPixelsBands.get(0).getArray());
+            quantiseMatrixR = getQuantiseCoefficients(DTCTransformMatrixR);
             System.out.println("R");
             DTCTransformMatrixG = getDTCTransformMatrix(matrixPixelsBands.get(1).getArray());
+            quantiseMatrixG = getQuantiseCoefficients(DTCTransformMatrixG);
             System.out.println("G");
             DTCTransformMatrixB = getDTCTransformMatrix(matrixPixelsBands.get(2).getArray());
+            quantiseMatrixB = getQuantiseCoefficients(DTCTransformMatrixB);
             System.out.println("B");
 
         }
@@ -73,18 +77,65 @@ public class CryptoDCT {
                 dctTransformMatrix[i][j] = ci * cj * tmpSum;
             }
         }
-
         /*for ( int i = 0; i < m; i++)
         {
             for (int j = 0; j < n; j++)
-                System.out.printf("%f\t", dctTransformMatrix[i][j]);
+                System.out.print("%f\t" + dctTransformMatrix[i][j]);
             System.out.println();
         }*/
-
         return dctTransformMatrix;
     }
 
-    public void addMessage(double[][] DTCTransformMatrix) {
+    public int[][] getQuantiseCoefficients(double[][] DTCTransformMatrix) {
+        int[][] quantiseResult = new int[DTCTransformMatrix.length][DTCTransformMatrix[1].length];
+        int[][] quantiseMatrix =   {{16, 11, 10, 16, 24, 40, 51, 61},
+                                    {12, 12, 14, 19, 26, 58, 60, 55},
+                                    {14, 13, 16, 24, 40, 57, 69, 56},
+                                    {14, 17, 22, 29, 51, 87, 80, 62},
+                                    {18, 22, 37, 56, 68, 109, 103, 77},
+                                    {24, 35, 55, 64, 81, 104, 113, 92},
+                                    {49, 64, 78, 87, 103, 121, 120, 101},
+                                    {72, 92, 95, 98, 112, 100, 103, 99}};
 
+        //TODO delete 8
+        for (int i = 0; i<8; i++) {
+            for (int j = 0; j<8; j++) {
+                quantiseResult[i][j] = (int)Math.round(DTCTransformMatrix[i][j]/quantiseMatrix[i][j]);
+            }
+        }
+        for ( int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+                System.out.print(DTCTransformMatrix[i][j]+ " ");
+            System.out.println();
+        }
+        System.out.println();
+        for ( int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+                System.out.print(quantiseMatrix[i][j]+ " ");
+            System.out.println();
+        }
+        System.out.println();
+        for ( int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+                System.out.print(quantiseResult[i][j]+ " ");
+            System.out.println();
+        }
+
+        return null;
+    }
+
+    public int[][] addMessageEvery(int[][] quantiseMatrix) {
+
+        return null;
+    }
+
+    public int[][] addMessageFirst(int[][] quantiseMatrix) {
+        if (quantiseMatrix[0][0] % 2 == 0) {
+
+        }
+        return null;
     }
 }
