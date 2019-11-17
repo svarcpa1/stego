@@ -1,5 +1,3 @@
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -12,9 +10,9 @@ public class CryptoDCT {
     private BufferedImage sourceImage;
     private BufferedImage cryptoImage;
     private BufferedImage[] blocksOfImage;
-    public static int m = 8;
-    public static int n = 8;
-    public static double pi = 3.142857;
+    private static int m = 8;
+    private static int n = 8;
+    private static double pi = 3.142857;
 
 
     public CryptoDCT() {
@@ -76,12 +74,13 @@ public class CryptoDCT {
             }
         }
 
-        for ( int i = 0; i < m; i++)
+        /*for ( int i = 0; i < m; i++)
         {
             for (int j = 0; j < n; j++)
                 System.out.printf("%f\t", dctTransformMatrix[i][j]);
             System.out.println();
-        }
+        }*/
+
         return dctTransformMatrix;
     }
 
