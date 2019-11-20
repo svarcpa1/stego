@@ -49,16 +49,6 @@ public class Utils {
         return arr;
     }
 
-    public byte[] integerToByte (Integer[] integer) {
-        byte[] bytes = new byte[integer.length];
-
-        for (int i = 0; i< integer.length; i++){
-            bytes[i] = integer[i].byteValue();
-        }
-
-        return bytes;
-    }
-
     public BufferedImage getImageFrombyteArray(byte[] inputData) throws Exception{
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(inputData);
         try {
@@ -67,5 +57,16 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public byte[] integerToByte(int intValue) {
+        byte[] result = new byte[4];
+
+        result[0] = (byte) ((intValue & 0xFF000000) >> 24);
+        result[1] = (byte) ((intValue & 0x00FF0000) >> 16);
+        result[2] = (byte) ((intValue & 0x0000FF00) >> 8);
+        result[3] = (byte) ((intValue & 0x000000FF) >> 0);
+
+        return result;
     }
 }

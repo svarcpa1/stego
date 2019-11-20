@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class CryptoDCT {
     private static int m = 8;
     private static int n = 8;
     private static double pi = 3.142857;
+    private int messageBitCounter = 7;
 
 
     public CryptoDCT() {
@@ -26,21 +28,26 @@ public class CryptoDCT {
         blocksOfImage = image.getBlocksOfImage(cryptoImage);
         double[][] DTCTransformMatrixR, DTCTransformMatrixG, DTCTransformMatrixB;
         int[][] quantiseMatrixR, quantiseMatrixG, quantiseMatrixB;
+        int[][] recountQuantiseMatrixR, recountQuantiseMatrixG, recountQuantiseMatrixB;
+        ArrayList<int[][]> quantiseMatrixRGB = new ArrayList<>();
 
         for (BufferedImage bi : blocksOfImage) {
 
             ArrayList<Array2D> matrixPixelsBands = image.getMatrixPixelsBands(bi);
             DTCTransformMatrixR = getDTCTransformMatrix(matrixPixelsBands.get(0).getArray());
             quantiseMatrixR = getQuantiseCoefficients(DTCTransformMatrixR);
-            System.out.println("R");
             DTCTransformMatrixG = getDTCTransformMatrix(matrixPixelsBands.get(1).getArray());
             quantiseMatrixG = getQuantiseCoefficients(DTCTransformMatrixG);
-            System.out.println("G");
             DTCTransformMatrixB = getDTCTransformMatrix(matrixPixelsBands.get(2).getArray());
             quantiseMatrixB = getQuantiseCoefficients(DTCTransformMatrixB);
-            System.out.println("B");
+
+            quantiseMatrixRGB.add(quantiseMatrixR);
+            quantiseMatrixRGB.add(quantiseMatrixG);
+            quantiseMatrixRGB.add(quantiseMatrixB);
 
         }
+        quantiseMatrixRGB = addMessageFirst(quantiseMatrixRGB, "Hello");
+
     }
 
     public double[][] getDTCTransformMatrix(int[][] imageMatrix){
@@ -103,7 +110,8 @@ public class CryptoDCT {
                 quantiseResult[i][j] = (int)Math.round(DTCTransformMatrix[i][j]/quantiseMatrix[i][j]);
             }
         }
-        for ( int i = 0; i < m; i++)
+
+        /*for ( int i = 0; i < m; i++)
         {
             for (int j = 0; j < n; j++)
                 System.out.print(DTCTransformMatrix[i][j]+ " ");
@@ -122,20 +130,28 @@ public class CryptoDCT {
             for (int j = 0; j < n; j++)
                 System.out.print(quantiseResult[i][j]+ " ");
             System.out.println();
-        }
+        }*/
 
-        return null;
+        return quantiseResult;
     }
 
-    public int[][] addMessageEvery(int[][] quantiseMatrix) {
+    public ArrayList<int[][]> addMessageFirst(ArrayList<int[][]> quantiseMatrixRGB, String message) {
+        Utils utils = new Utils();
+        int bitTextShift = 7;
+        int byteTextShift = 0;
+        byte[] textByteArray = text.getBytesFromText(message);
 
-        return null;
-    }
+        for (int i = 0; i < textByteArray.length*8; i++) {
+            byte[] firstValueByte = utils.integerToByte(quantiseMatrixRGB.get(i)[0][0]);
 
-    public int[][] addMessageFirst(int[][] quantiseMatrix) {
-        if (quantiseMatrix[0][0] % 2 == 0) {
-
+            firstValueByte[3] = (byte) ((firstValueByte[3] & 0xFE) | ((int) textByteArray[byteTextShift] >>> bitTextShift) & 1);
+            if (bitTextShift <= 0) {
+                bitTextShift = 7;
+                byteTextShift++;
+            } else {
+                bitTextShift--;
+            }
         }
-        return null;
+        return quantiseMatrixRGB;
     }
 }
