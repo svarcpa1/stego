@@ -50,6 +50,14 @@ public class CryptoDCT {
         //order: R, G, B, R, G, B, R.....
         quantiseMatrixRGB = addMessageFirst(quantiseMatrixRGB, "Hello");
         System.out.println("stop");
+
+        for (int[][] bi2 : quantiseMatrixRGB) {
+            int [][] revertQCoef = revertGetQuantiseCoefficients(bi2);
+            int [][] revertDCT = revertGetDCTransformMatrix(revertQCoef);
+            System.out.println("stop");
+        }
+
+
     }
 
     public double[][] getDCTransformMatrix(int[][] imageMatrix){
@@ -133,10 +141,124 @@ public class CryptoDCT {
     }
 
 
+//----------------------------------------------------------------------------------------------------------------------
+    //geeks
+    public int[] getZigZag (int[][] matrix, int m, int n) {
+        int row = 0, col = 0;
+        String zigZagResultString="";
+        int [] zigZagResult = new int[64];
+
+        // Boolean variable that will true if need to increment 'row' value otherwise false
+        boolean row_inc = false;
+
+        // Print matrix of lower half zig-zag pattern
+        int min = Math.min(m, n);
+        for (int len = 1; len <= min; ++len) {
+            for (int i = 0; i < len; ++i) {
+                zigZagResultString = zigZagResultString+(matrix[row][col]);
+
+                if (i + 1 == len) {
+                    break;
+                }
+                if (!row_inc) {
+                    --row;
+                    ++col;
+                } else {
+                    ++row;
+                    --col;
+                }
+            }
+
+            if (len == min) {
+                break;
+            }
+            if (!row_inc) {
+                ++col;
+                row_inc = true;
+            } else {
+                ++row;
+                row_inc = false;
+            }
+        }
+
+        if (row == 0) {
+            if (col == m - 1) {
+                ++row;
+            } else {
+                ++col;
+            }
+            row_inc = true;
+        } else {
+            if (row == n - 1) {
+                ++col;
+            } else {
+                ++row;
+            }
+            row_inc = false;
+        }
+
+        int MAX = Math.max(m, n) - 1;
+        for (int len, diag = MAX; diag > 0; --diag) {
+
+            if (diag > min) {
+                len = min;
+            } else {
+                len = diag;
+            }
+
+            for (int i = 0; i < len; ++i) {
+                zigZagResultString = zigZagResultString+(matrix[row][col]);
+
+                if (i + 1 == len) {
+                    break;
+                }
+                if (row_inc) {
+                    ++row;
+                    --col;
+                } else {
+                    ++col;
+                    --row;
+                }
+            }
+
+            if (row == 0 || col == m - 1) {
+                if (col == m - 1) {
+                    ++row;
+                } else {
+                    ++col;
+                }
+
+                row_inc = true;
+            }
+
+            else if (col == 0 || row == n - 1) {
+                if (row == n - 1) {
+                    ++col;
+                } else {
+                    ++row;
+                }
+                row_inc = false;
+            }
+        }
+
+        String[] nmbStringArr = zigZagResultString.split("");
+        for(int i = 0;i < nmbStringArr.length;i++)
+        {
+            zigZagResult[i] = Integer.parseInt(nmbStringArr[i]);
+        }
+
+        return zigZagResult;
+    }
 
 
 
 
+
+
+
+
+
+// ----------------------------------------------------------------------------------------------------------------------
     public int[][] revertGetQuantiseCoefficients (int[][] quantiseMatrixRGB) {
         int[][] quantiseMatrix =   {{16, 11, 10, 16, 24, 40, 51, 61},
                                     {12, 12, 14, 19, 26, 58, 60, 55},
@@ -151,10 +273,11 @@ public class CryptoDCT {
                 quantiseMatrixRGB[j][k]=quantiseMatrixRGB[j][k]*quantiseMatrix[j][k];
             }
         }
+
         return quantiseMatrixRGB;
     }
 
-    public int[][] revertGetDTCTransformMatrix(int[][] quantiseMatrixRGB) {
+    public int[][] revertGetDCTransformMatrix(int[][] quantiseMatrixRGB) {
         double[][] dctTransformMatrix = new double[m][n];
         double ck, cl, tmpDCTValue, tmpSum;
             for (int i = 0; i < m; i++) {

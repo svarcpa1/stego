@@ -11,7 +11,7 @@ public class Main {
         int sourceMode = 1;
 
         //squares
-        Path pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\lenna.png");
+        Path pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\stripes.bmp");
         Path pathDecode = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\lenna_output.png");
 
         URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article" +
