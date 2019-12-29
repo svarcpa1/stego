@@ -1,3 +1,9 @@
+import jpegEncoder.JpegEncoder;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -6,8 +12,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        JpegEncoder jpegEncoder;
         CryptoLSB cryptoLSB = new CryptoLSB();
-        CryptoDCT cryptoDCT = new CryptoDCT();
         int sourceMode = 1;
 
         //squares
@@ -17,11 +23,27 @@ public class Main {
         URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article" +
                 "/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
 
-        String textToHide = "Michal je chytrý kluk jako buk";
+        String textToHide = "Ahoj";
         //cryptoLSB.code(pathSource, textToHide, sourceMode);
         //crypto.codeURL(url, textToHide, sourceMode);
         //System.out.println(cryptoLSB.decode(pathDecode));
 
-        cryptoDCT.codeDCT(pathSource);
+        Image image = new Image();
+        BufferedImage sourceImage = image.readImageFile(pathSource.toString());
+        FileOutputStream fileOutputStream = new FileOutputStream(new File("aaa.jpg"));
+
+        //jpg creation
+        CryptoDCT cryptoDCT = new CryptoDCT();
+        jpegEncoder = new JpegEncoder(sourceImage, 80, fileOutputStream);
+        jpegEncoder.Compress(textToHide);
+        fileOutputStream.close();
+
+        //jpg decode
+        File file = new File("aaa.jpg");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        int [] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
+        int [] bitArray = cryptoDCT.extractLSBFromCoefficients(coefficients);
+        byte [] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
+        System.out.println(cryptoDCT.decodeDCT(byteArray));
     }
 }

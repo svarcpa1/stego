@@ -69,7 +69,7 @@ public class Image {
         return fileNameArray[1];
     }
 
-    //get matrix of pixels (used in DCT]
+    //get matrix of pixels (used in jpegEncoder.DCT]
     public int[][] getMatrixPixels(BufferedImage image){
         int[][] matrixPixels = new int[image.getWidth()][image.getHeight()];
         for (int i = 0; i < matrixPixels[0].length; i++) {
@@ -80,7 +80,7 @@ public class Image {
         return matrixPixels;
     }
 
-    //get matrix of pixels (used in DCT]
+    //get matrix of pixels (used in jpegEncoder.DCT]
     public ArrayList<Array2D> getMatrixPixelsBands(BufferedImage image){
         int[][] matrixPixelsR = new int[image.getWidth()][image.getHeight()];
         int[][] matrixPixelsG = new int[image.getWidth()][image.getHeight()];
@@ -110,7 +110,7 @@ public class Image {
         return matrixPixelsBands;
     }
 
-    //get matrix of pixels (used in DCT]
+    //get matrix of pixels (used in jpegEncoder.DCT]
     public BufferedImage[] getBlocksOfImage(BufferedImage image){
         int width = image.getWidth();
         int height = image.getHeight();
@@ -126,6 +126,4 @@ public class Image {
         }
         return blocksOfImage;
     }
-
-    //TODO YCbCr conversion
 }

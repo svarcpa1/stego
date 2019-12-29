@@ -1,6 +1,8 @@
+package text;
+
 import java.util.ArrayList;
 
-public class Text {
+public class TextUtils {
 
     public byte[] getBytesFromText(String text){
         //TODO simplify
