@@ -1,6 +1,4 @@
-package text;
-
-import java.util.ArrayList;
+package utils;
 
 public class TextUtils {
 

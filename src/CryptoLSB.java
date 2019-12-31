@@ -1,5 +1,5 @@
 import org.jetbrains.annotations.NotNull;
-import text.TextUtils;
+import utils.TextUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

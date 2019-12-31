@@ -1,11 +1,32 @@
+package utils;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Utils {
+public class UtilsGeneral {
+
+    public String trimFront(String text, char character) {
+        String result = "";
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) != character) {
+                result = result+text.charAt(i);
+            } else {
+              return result;
+            }
+        }
+        return result;
+    }
+
+    public byte[] concat(byte[] first, byte[] second) {
+        byte[] result = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, result, first.length, second.length);
+        return result;
+    }
 
     public void bitsToFile (ArrayList<Integer> bits, String fileName) throws IOException {
         // .png starts with: 137, 80, 78, 71, 13, 10, 26, 10 ->

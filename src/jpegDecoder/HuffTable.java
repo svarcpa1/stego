@@ -19,7 +19,8 @@
 /*                                                       */
 /********************** 11/4/97 **************************/
 /*
- * /////////////// DISCLAIMER///////////////////////////////// This software is
+ * /////////////// DISCLAIMER/////////////////////////////////
+ * This software is
  * provided by the author and contributors ``as is'' and any express or implied
  * warranties, including, but not limited to, the implied warranties of
  * merchantability and fitness for a particular purpose are dis- claimed. In no

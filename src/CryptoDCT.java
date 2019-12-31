@@ -2,7 +2,6 @@ import jpegDecoder.HuffmanDecode;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 public class CryptoDCT {
     private static byte[] deZigZag = {
             0, 1, 5, 6, 14, 15, 27, 28,
@@ -22,10 +21,10 @@ public class CryptoDCT {
         return coefficients;
     }
 
-    public int[] extractLSBFromCoefficients (int[] coefficients) {
+    public int[] extractLSBFromCoefficientsMessage (int[] coefficients) {
         int[] bitArray = new int[coefficients.length/64];
         int index = 0;
-        //TODO length checking
+
         for (int i = deZigZag[23]; i < coefficients.length; i=i+64) {
             if (coefficients[i] % 2 == 0) {
                 bitArray[index] = 0;
@@ -34,6 +33,7 @@ public class CryptoDCT {
             }
             index++;
         }
+
         return bitArray;
     }
 

@@ -12,7 +12,8 @@ package jpegEncoder;// Version 1.0a
 // Jpeg Group's Jpeg 6a library, Copyright Thomas G. Lane.
 // See license.txt for details.
 
-import text.TextUtils;
+import utils.TextUtils;
+import utils.UtilsGeneral;
 
 import java.awt.AWTException;
 import java.awt.Frame;
@@ -48,13 +49,9 @@ public class JpegEncoder extends Frame
     DCT dct;
     int imageHeight, imageWidth;
     int Quality;
-    int code;
-    private byte[] message;
-
-    public void setMessage(byte[] message) {
-        this.message = message;
-    }
-
+    //---
+    UtilsGeneral utilsGeneral = new UtilsGeneral();
+    //---
     public JpegEncoder(Image image, int quality, OutputStream out)
     {
         MediaTracker tracker = new MediaTracker(this);
@@ -94,9 +91,10 @@ public class JpegEncoder extends Frame
     }
 
     public void Compress(String messageString) {
-        text.TextUtils textUtils = new TextUtils();
+        utils.TextUtils textUtils = new TextUtils();
         WriteHeaders(outStream);
-        WriteCompressedData(outStream, textUtils.getBytesFromText(messageString));
+        WriteCompressedData(outStream, textUtils.getBytesFromText(messageString),
+                textUtils.getTextLength(messageString.length()));
         WriteEOI(outStream);
         try {
             outStream.flush();
@@ -106,7 +104,8 @@ public class JpegEncoder extends Frame
         }
     }
 
-    public void WriteCompressedData(BufferedOutputStream outStream, byte[] message) {
+    public void WriteCompressedData(BufferedOutputStream outStream, byte[] message, byte[] messageLength) {
+
         int i, j, r, c,a ,b;
         int comp, xpos, ypos, xblockoffset, yblockoffset;
         float inputArray[][];
@@ -115,6 +114,7 @@ public class JpegEncoder extends Frame
         int dctArray3[] = new int[8*8];
 
         //---
+
         byte currentByte;
         int nBytes = message.length;
         int iByte = 0;
@@ -124,6 +124,8 @@ public class JpegEncoder extends Frame
         } else {
             currentByte = (byte) 0;
         }
+
+        byte [] lengthAndMessage = utilsGeneral.concat(messageLength, message);
         //---
 
         /*
