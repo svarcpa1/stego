@@ -5,43 +5,32 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 
 public class CryptoLSB {
-
     private Image image = new Image();
     private TextUtils textUtils = new TextUtils();
     private int initialShift = 32;
-    private BufferedImage sourceImage;
-    private BufferedImage cryptoImage;
 
     public CryptoLSB() {
     }
 
-    public void code (@NotNull Path path, BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
+    public void code (Path path,  BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
         //duplicates source image - more stable
-        cryptoImage = image.getNewImage(sourceImage);
+        BufferedImage cryptoImage = image.getNewImage(sourceImage);
         //add encrypted text to source image
         cryptoImage = addTextLengthToImage(cryptoImage, textToHide);
         cryptoImage = addTextToImage(cryptoImage, textToHide);
 
         //creates file
         File outputFile;
-        outputFile = new File(image.getImageOutName(path));
-        ImageIO.write(cryptoImage, image.getImageType(path), outputFile);
-    }
-
-    public void codeURL (@NotNull URL path, BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
-        //duplicates source image - more stable
-        cryptoImage = image.getNewImage(sourceImage);
-        //add encrypted text to source image
-        cryptoImage = addTextToImage(cryptoImage, textToHide);
-
-        //creates file
-        File outputFile;
-        outputFile = new File("url_output.png");
-        ImageIO.write(cryptoImage, "png", outputFile);
+        if (sourceMode==0) {
+            outputFile = new File(image.getImageOutName(path));
+            ImageIO.write(cryptoImage, image.getImageType(path), outputFile);
+        } else {
+            outputFile = new File("url_output.png");
+            ImageIO.write(cryptoImage, "png", outputFile);
+        }
     }
 
     public String decode (@NotNull Path path) throws IOException {
@@ -50,8 +39,7 @@ public class CryptoLSB {
         BufferedImage imageToBeDecoded = image.readImageFile(path.toString());
         BufferedImage newImageToBeDecoded = image.getNewImage(imageToBeDecoded);
         decodedByteArray = extractTextFromImage(newImageToBeDecoded);
-        String message = new String(decodedByteArray);
-        return message;
+        return new String(decodedByteArray);
     }
 
     public BufferedImage addTextToImage(BufferedImage image, String message){
@@ -65,12 +53,12 @@ public class CryptoLSB {
         }
 
         //TODO isn't message too long?
-        for(int i = 0; i<textByteArray.length; i++){
+        for (byte b : textByteArray) {
 
-            for(int j = 7; j>=0; j--){
+            for (int j = 7; j >= 0; j--) {
                 initialShift++;
                 imageByteArray[initialShift] =
-                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textByteArray[i] >>> j) & 1);
+                        (byte) ((imageByteArray[initialShift] & 0xFE) | ((int) b >>> j) & 1);
             }
         }
         return image;
@@ -82,11 +70,11 @@ public class CryptoLSB {
         byte[] textByteArray = textUtils.getBytesFromText(message);
         byte[] textLengthByteArray = textUtils.getTextLength(textByteArray.length);
 
-        for(int i = 0; i<textLengthByteArray.length; i++){
+        for (byte b : textLengthByteArray) {
 
-            for(int j = 7; j>=0; j--){
+            for (int j = 7; j >= 0; j--) {
                 imageByteArray[initialShift] =
-                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textLengthByteArray[i] >>> j) & 1);
+                        (byte) ((imageByteArray[initialShift] & 0xFE) | ((int) b >>> j) & 1);
                 initialShift++;
             }
         }

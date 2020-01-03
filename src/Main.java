@@ -16,20 +16,20 @@ public class Main {
         JpegEncoder jpegEncoder;
         CryptoLSB cryptoLSB = new CryptoLSB();
         UtilsGeneral utilsGeneral = new UtilsGeneral();
-        int sourceMode = 1;
+        int sourceMode = 0;
         int cryptoMode; // 0 -> LSB; 1 -> DCT
         boolean isPossibleJpeg= true;
 
         Path pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\stripes.bmp");
         Path pathDecode = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\stripes_output.bmp");
 
-        URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article" +
-                "/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
+        //URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
 
-        String textToHide = "12345678912345678912345";
+        String textToHide = "1michal je chytrý klukkk";
 
         Image image = new Image();
         BufferedImage sourceImage = image.readImageFile(pathSource.toString());
+        //BufferedImage sourceImageURL = image.readImageURL(url.toString());
 
         int charCapacityLSB = (sourceImage.getHeight()*sourceImage.getWidth())/8-4;
         int charCapacityDCT = ((((sourceImage.getHeight()/8)*(sourceImage.getWidth()/8))*3)/8)-1;

@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class CryptoDCT {
-    private static byte[] deZigZag = {
+    private static byte[] zigZagHelper = {
             0, 1, 5, 6, 14, 15, 27, 28,
             2, 4, 7, 13, 16, 26, 29, 42,
             3, 8, 12, 17, 25, 30, 41, 43,
@@ -13,19 +13,18 @@ public class CryptoDCT {
             21, 34, 37, 47, 50, 56, 59, 61,
             35, 36, 48, 49, 57, 58, 62, 63 };
 
-    public int[] extractCoefficients(InputStream inputStream, int flength) throws IOException {
-        byte[] carrier = new byte[flength];
+    public int[] extractCoefficients(InputStream inputStream, int fileLength) throws IOException {
+        byte[] carrier = new byte[fileLength];
         inputStream.read(carrier);
         HuffmanDecode huffmanDecode = new HuffmanDecode(carrier);
-        int[] coefficients = huffmanDecode.decode();
-        return coefficients;
+        return huffmanDecode.decode();
     }
 
     public int[] extractLSBFromCoefficientsMessage (int[] coefficients) {
         int[] bitArray = new int[coefficients.length/64];
         int index = 0;
 
-        for (int i = deZigZag[23]; i < coefficients.length; i=i+64) {
+        for (int i = zigZagHelper[23]; i < coefficients.length; i=i+64) {
             if (coefficients[i] % 2 == 0) {
                 bitArray[index] = 0;
             } else {
@@ -57,8 +56,7 @@ public class CryptoDCT {
         return byteArrayChar;
     }
 
-    public String decodeDCT (byte[] messageBytes) throws IOException {
-        String message = new String(messageBytes);
-        return message;
+    public String decodeDCT (byte[] messageBytes) {
+        return new String(messageBytes);
     }
 }

@@ -1,4 +1,6 @@
-package jpegEncoder;// Version 1.0a
+package jpegEncoder;
+
+// Version 1.0a
 // Copyright (C) 1998, James R. Weeks and BioElectroMech.
 // Visit BioElectroMech at www.obrador.com.  Email James@obrador.com.
 
