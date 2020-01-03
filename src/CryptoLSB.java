@@ -19,9 +19,7 @@ public class CryptoLSB {
     public CryptoLSB() {
     }
 
-    public void code (@NotNull Path path, String textToHide, int sourceMode) throws Exception {
-        //takes source image
-        sourceImage = image.readImageFile(path.toString());
+    public void code (@NotNull Path path, BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
         //duplicates source image - more stable
         cryptoImage = image.getNewImage(sourceImage);
         //add encrypted text to source image
@@ -34,9 +32,7 @@ public class CryptoLSB {
         ImageIO.write(cryptoImage, image.getImageType(path), outputFile);
     }
 
-    public void codeURL (@NotNull URL path, String textToHide, int sourceMode) throws Exception {
-        //takes source image
-        sourceImage = image.readImageURL(path.toString());
+    public void codeURL (@NotNull URL path, BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
         //duplicates source image - more stable
         cryptoImage = image.getNewImage(sourceImage);
         //add encrypted text to source image
