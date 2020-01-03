@@ -1,31 +1,30 @@
-/* Version 0.1 of F5 Steganography Software by Andreas Westfeld 1999 */
-/***********************************************************/
-/* JPEG Decoder */
-/* Sean Breslin */
-/* EE590 Directed Research */
-/* Dr. Ortega */
-/* Fall 1997 */
-/*                                                         */
-/* HuffmanDecode.class: */
-/* This object performs entopy decoding on */
-/* a JPEG image file. This object instanciates */
-/* HuffTable.class which extracts the Huffman */
-/* Tables from the file header information. */
-/*                                                         */
-/* Methods: */
-/* HuffDecode(), returns array of 8x8 */
-/* blocks of image data */
-/* getX(), returns horizontal image size */
-/* getY(), returns vertical image size */
-/* getPrec(), returns sample precision */
-/* getComp(), returns number of components */
-/* rawDecode(), returns quantized */
-/* coefficients */
-/*                                                         */
-/********************** 11/4/97 ****************************/
-//
-// changes by Andreas Westfeld
-// <mailto:westfeld@inf.tu-dresden.de>
+/* Version 0.1 of F5 Steganography Software by Andreas Westfeld 1999
+
+ JPEG Decoder
+ Sean Breslin
+ EE590 Directed Research
+ Dr. Ortega
+ Fall 1997
+
+ HuffmanDecode.class:
+ This object performs entopy decoding on
+ a JPEG image file. This object instanciates
+ HuffTable.class which extracts the Huffman
+ Tables from the file header information.
+
+ Methods:
+ HuffDecode(), returns array of 8x8
+ blocks of image data
+ getX(), returns horizontal image size
+ getY(), returns vertical image size
+ getPrec(), returns sample precision
+ getComp(), returns number of components
+ rawDecode(), returns quantized
+ coefficients
+
+ changes by Andreas Westfeld
+ <mailto:westfeld@inf.tu-dresden.de>*/
+
 package jpegDecoder;
 
 //

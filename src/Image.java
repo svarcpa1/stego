@@ -59,12 +59,20 @@ public class Image {
     public String getImageOutName(Path path){
         String fileName =  path.getFileName().toString();
         String[] fileNameArray =  fileName.split("\\.");
-        return fileNameArray[0] + "_output." + fileNameArray[1];
+        if (fileNameArray[1].equals("jpg") || fileNameArray[1].equals("jpeg")) {
+            return fileNameArray[0] + "_output." + "png";
+        } else {
+            return fileNameArray[0] + "_output." + fileNameArray[1];
+        }
     }
 
     public String getImageType(Path path){
         String fileName =  path.getFileName().toString();
         String[] fileNameArray =  fileName.split("\\.");
-        return fileNameArray[1];
+        if (fileNameArray[1].equals("jpg") || fileNameArray[1].equals("jpeg")) {
+            return "png";
+        } else {
+            return fileNameArray[1];
+        }
     }
 }

@@ -52,7 +52,6 @@ public class CryptoLSB {
             throw new IllegalArgumentException("Image is too small for the text");
         }
 
-        //TODO isn't message too long?
         for (byte b : textByteArray) {
 
             for (int j = 7; j >= 0; j--) {
@@ -70,11 +69,10 @@ public class CryptoLSB {
         byte[] textByteArray = textUtils.getBytesFromText(message);
         byte[] textLengthByteArray = textUtils.getTextLength(textByteArray.length);
 
-        for (byte b : textLengthByteArray) {
-
-            for (int j = 7; j >= 0; j--) {
+        for(int i = 0; i<textLengthByteArray.length; i++){
+            for(int j = 7; j>=0; j--){
                 imageByteArray[initialShift] =
-                        (byte) ((imageByteArray[initialShift] & 0xFE) | ((int) b >>> j) & 1);
+                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textLengthByteArray[i] >>> j) & 1);
                 initialShift++;
             }
         }

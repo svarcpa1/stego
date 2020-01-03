@@ -1,18 +1,18 @@
 package jpegEncoder;
 
-// Version 1.0a
-// Copyright (C) 1998, James R. Weeks and BioElectroMech.
-// Visit BioElectroMech at www.obrador.com.  Email James@obrador.com.
+/* Version 1.0a
+ Copyright (C) 1998, James R. Weeks and BioElectroMech.
+ Visit BioElectroMech at www.obrador.com.  Email James@obrador.com.
 
-// See license.txt for details about the allowed used of this software.
-// This software is based in part on the work of the Independent JPEG Group.
-// See IJGreadme.txt for details about the Independent JPEG Group's license.
+ See license.txt for details about the allowed used of this software.
+ This software is based in part on the work of the Independent JPEG Group.
+ See IJGreadme.txt for details about the Independent JPEG Group's license.
 
-// This encoder is inspired by the Java Jpeg encoder by Florian Raemy,
-// studwww.eurecom.fr/~raemy.
-// It borrows a great deal of code and structure from the Independent
-// Jpeg Group's Jpeg 6a library, Copyright Thomas G. Lane.
-// See license.txt for details.
+ This encoder is inspired by the Java Jpeg encoder by Florian Raemy,
+ studwww.eurecom.fr/~raemy.
+ It borrows a great deal of code and structure from the Independent
+ Jpeg Group's Jpeg 6a library, Copyright Thomas G. Lane.
+ See license.txt for details.*/
 
 import utils.TextUtils;
 import utils.UtilsGeneral;
