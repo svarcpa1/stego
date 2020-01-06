@@ -16,7 +16,7 @@ public class Main {
         JpegEncoder jpegEncoder;
         CryptoLSB cryptoLSB = new CryptoLSB();
         UtilsGeneral utilsGeneral = new UtilsGeneral();
-        int sourceMode = 0;
+        int sourceMode = 0; // 0 -> file; 1 -> url
         int cryptoMode; // 0 -> LSB; 1 -> DCT; 100 -> error
         boolean isPossibleJpeg= true;
         long startTime, endTime;
@@ -25,13 +25,13 @@ public class Main {
         int charCapacityLSB, charCapacityDCT;
         BufferedImage sourceImage;
 
-        String textToHide = "Ahoj světe";
+        String textToHide = "vfuzfuz";
         Image image = new Image();
 
         //if file
         if (sourceMode == 0) {
-            pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\fullHD.jpg");
-            pathDecode = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\fullHD_output.png");
+            pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\margot2.jpg");
+            pathDecode = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\margot2_output.jpg");
 
             sourceImage = image.readImageFile(pathSource.toString());
 
@@ -44,8 +44,15 @@ public class Main {
             //result is number of chars that can be inserted
             //for image 64x64px the result is 508
 
+            //int aa = cryptoDCT.getPossibleLength(fileInputStream, (int) file.length());
+
             //total number of 8x8 squares of pixels in the image
-            charCapacityDCT = (sourceImage.getHeight()/8)*(sourceImage.getWidth()/8);
+            double height = sourceImage.getHeight();
+            int intHeight = (int) Math.round(height/8);
+            double width = sourceImage.getWidth();
+            int intWidth = (int) Math.round(width/8);
+
+            charCapacityDCT = (intHeight*intWidth);
             //R, G, B bands of 8x8 squares (each band cen holds one bit of message)
             charCapacityDCT = charCapacityDCT * 3;
             //8 bit is needed fo storing one char of message
@@ -81,7 +88,7 @@ public class Main {
         }
 
         //for testing purposes
-        cryptoMode = 0;
+        //cryptoMode = 1;
         //textToHide = "";
 
         if (cryptoMode==0) {

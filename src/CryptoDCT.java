@@ -13,7 +13,14 @@ public class CryptoDCT {
             21, 34, 37, 47, 50, 56, 59, 61,
             35, 36, 48, 49, 57, 58, 62, 63 };
 
-    public int[] extractCoefficients(InputStream inputStream, int fileLength) throws IOException {
+    public int getPossibleLength (InputStream inputStream, int fileLength) throws IOException {
+        byte[] carrier = new byte[fileLength];
+        inputStream.read(carrier);
+        HuffmanDecode huffmanDecode = new HuffmanDecode(carrier);
+        return huffmanDecode.decode().length/64/8;
+    }
+
+    public int[] extractCoefficients (InputStream inputStream, int fileLength) throws IOException {
         byte[] carrier = new byte[fileLength];
         inputStream.read(carrier);
         HuffmanDecode huffmanDecode = new HuffmanDecode(carrier);
@@ -32,7 +39,7 @@ public class CryptoDCT {
             }
             index++;
         }
-
+        System.out.println("s");
         return bitArray;
     }
 
@@ -40,6 +47,10 @@ public class CryptoDCT {
         byte [] byteArrayChar = new byte[lsbValues.length/8];
         int index2 = 0;
         for (int i = 0; i < lsbValues.length; i=i+8) {
+            if (i==Math.floor(lsbValues.length/8)*8 ) {
+                System.out.println("stop");
+                break;
+            }
             String byteCharString = Integer.toString(lsbValues[i]);
             byteCharString += Integer.toString(lsbValues[i+1]);
             byteCharString += Integer.toString(lsbValues[i+2]);
