@@ -14,7 +14,7 @@ package jpegEncoder;
  Jpeg Group's Jpeg 6a library, Copyright Thomas G. Lane.
  See license.txt for details.*/
 
-import utils.TextUtils;
+import utils.UtilsText;
 import utils.UtilsGeneral;
 
 import java.awt.AWTException;
@@ -93,10 +93,10 @@ public class JpegEncoder extends Frame
     }
 
     public void Compress(String messageString) {
-        utils.TextUtils textUtils = new TextUtils();
+        UtilsText utilsText = new UtilsText();
         WriteHeaders(outStream);
-        WriteCompressedData(outStream, textUtils.getBytesFromText(messageString),
-                textUtils.getTextLength(messageString.length()));
+        WriteCompressedData(outStream, utilsText.getBytesFromText(messageString),
+                utilsText.getTextLength(messageString.length()));
         WriteEOI(outStream);
         try {
             outStream.flush();
@@ -127,7 +127,6 @@ public class JpegEncoder extends Frame
             currentByte = (byte) 0;
         }
 
-        byte [] lengthAndMessage = utilsGeneral.concat(messageLength, message);
         //---
 
         /*

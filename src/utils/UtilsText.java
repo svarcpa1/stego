@@ -1,6 +1,6 @@
 package utils;
 
-public class TextUtils {
+public class UtilsText {
 
     public byte[] getBytesFromText(String text){
         //TODO simplify

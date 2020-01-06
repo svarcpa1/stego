@@ -1,5 +1,5 @@
 import org.jetbrains.annotations.NotNull;
-import utils.TextUtils;
+import utils.UtilsText;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 public class CryptoLSB {
     private Image image = new Image();
-    private TextUtils textUtils = new TextUtils();
+    private UtilsText utilsText = new UtilsText();
     private int initialShift = 32;
 
     public CryptoLSB() {
@@ -42,10 +42,26 @@ public class CryptoLSB {
         return new String(decodedByteArray);
     }
 
+    public BufferedImage addTextLengthToImage(BufferedImage image, String message){
+        initialShift = 0;
+        byte[] imageByteArray = this.image.getBytesFromImage(image);
+        byte[] textByteArray = utilsText.getBytesFromText(message);
+        byte[] textLengthByteArray = utilsText.getTextLength(textByteArray.length);
+
+        for(int i = 0; i<textLengthByteArray.length; i++){
+            for(int j = 7; j>=0; j--){
+                imageByteArray[initialShift] =
+                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textLengthByteArray[i] >>> j) & 1);
+                initialShift++;
+            }
+        }
+        return image;
+    }
+
     public BufferedImage addTextToImage(BufferedImage image, String message){
         initialShift = 32;
         byte[] imageByteArray = this.image.getBytesFromImage(image);
-        byte[] textByteArray = textUtils.getBytesFromText(message);
+        byte[] textByteArray = utilsText.getBytesFromText(message);
         //byte[] textLengthByteArray = text.getTextLength(message.length());
 
         if (imageByteArray.length + (initialShift/8) < textByteArray.length) {
@@ -63,20 +79,13 @@ public class CryptoLSB {
         return image;
     }
 
-    public BufferedImage addTextLengthToImage(BufferedImage image, String message){
-        initialShift = 0;
-        byte[] imageByteArray = this.image.getBytesFromImage(image);
-        byte[] textByteArray = textUtils.getBytesFromText(message);
-        byte[] textLengthByteArray = textUtils.getTextLength(textByteArray.length);
-
-        for(int i = 0; i<textLengthByteArray.length; i++){
-            for(int j = 7; j>=0; j--){
-                imageByteArray[initialShift] =
-                        (byte)((imageByteArray[initialShift] & 0xFE) | ((int)textLengthByteArray[i] >>> j) & 1);
-                initialShift++;
-            }
+    public int extractTextLength(byte[] image){
+        int textLength = 0;
+        //first four bytes holding length
+        for (int i = 0; i<32; i++){
+            textLength = (textLength << 1) | (image[i] & 1);
         }
-        return image;
+        return textLength;
     }
 
     public byte[] extractTextFromImage(BufferedImage image){
@@ -95,14 +104,5 @@ public class CryptoLSB {
             }
         }
         return result;
-    }
-
-    public int extractTextLength(byte[] image){
-        int textLength = 0;
-        //first four bytes holding length
-        for (int i = 0; i<32; i++){
-            textLength = (textLength << 1) | (image[i] & 1);
-        }
-        return textLength;
     }
 }
