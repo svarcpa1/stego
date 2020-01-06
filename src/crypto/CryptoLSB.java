@@ -1,4 +1,7 @@
+package crypto;
+
 import org.jetbrains.annotations.NotNull;
+import utils.UtilsImage;
 import utils.UtilsText;
 
 import javax.imageio.ImageIO;
@@ -8,27 +11,27 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class CryptoLSB {
-    private Image image = new Image();
+    private UtilsImage utilsImage = new UtilsImage();
     private UtilsText utilsText = new UtilsText();
     private int initialShift = 32;
 
     public CryptoLSB() {
     }
 
-    public void code (Path path,  BufferedImage sourceImage, String textToHide, int sourceMode) throws Exception {
+    public void code (Path path,  BufferedImage sourceImage, String message, int sourceMode) throws Exception {
         //duplicates source image - more stable
-        BufferedImage cryptoImage = image.getNewImage(sourceImage);
+        BufferedImage cryptoImage = utilsImage.getNewImage(sourceImage);
         //add encrypted text to source image
-        cryptoImage = addTextLengthToImage(cryptoImage, textToHide);
-        cryptoImage = addTextToImage(cryptoImage, textToHide);
+        cryptoImage = addTextLengthToImage(cryptoImage, message);
+        cryptoImage = addTextToImage(cryptoImage, message);
 
         //creates file
         File outputFile;
         if (sourceMode==0) {
-            outputFile = new File(image.getImageOutName(path));
-            ImageIO.write(cryptoImage, image.getImageType(path), outputFile);
+            outputFile = new File("output."+ utilsImage.getImageType(path));
+            ImageIO.write(cryptoImage, utilsImage.getImageType(path), outputFile);
         } else {
-            outputFile = new File("url_output.png");
+            outputFile = new File("output.png");
             ImageIO.write(cryptoImage, "png", outputFile);
         }
     }
@@ -36,15 +39,16 @@ public class CryptoLSB {
     public String decode (@NotNull Path path) throws IOException {
         byte[] decodedByteArray;
 
-        BufferedImage imageToBeDecoded = image.readImageFile(path.toString());
-        BufferedImage newImageToBeDecoded = image.getNewImage(imageToBeDecoded);
+        BufferedImage imageToBeDecoded = utilsImage.readImageFile(path.toString());
+        BufferedImage newImageToBeDecoded = utilsImage.getNewImage(imageToBeDecoded);
         decodedByteArray = extractTextFromImage(newImageToBeDecoded);
+
         return new String(decodedByteArray);
     }
 
     public BufferedImage addTextLengthToImage(BufferedImage image, String message){
         initialShift = 0;
-        byte[] imageByteArray = this.image.getBytesFromImage(image);
+        byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         byte[] textByteArray = utilsText.getBytesFromText(message);
         byte[] textLengthByteArray = utilsText.getTextLength(textByteArray.length);
 
@@ -60,9 +64,8 @@ public class CryptoLSB {
 
     public BufferedImage addTextToImage(BufferedImage image, String message){
         initialShift = 32;
-        byte[] imageByteArray = this.image.getBytesFromImage(image);
+        byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         byte[] textByteArray = utilsText.getBytesFromText(message);
-        //byte[] textLengthByteArray = text.getTextLength(message.length());
 
         if (imageByteArray.length + (initialShift/8) < textByteArray.length) {
             throw new IllegalArgumentException("Image is too small for the text");
@@ -81,7 +84,7 @@ public class CryptoLSB {
 
     public int extractTextLength(byte[] image){
         int textLength = 0;
-        //first four bytes holding length
+        //bytes 1-5 for holding method type
         for (int i = 0; i<32; i++){
             textLength = (textLength << 1) | (image[i] & 1);
         }
@@ -90,7 +93,7 @@ public class CryptoLSB {
 
     public byte[] extractTextFromImage(BufferedImage image){
         initialShift=32;
-        byte[] imageByteArray = this.image.getBytesFromImage(image);
+        byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         //size of return array depends on length of hidden text
         int textLength = extractTextLength(imageByteArray);
         byte[] result = new byte[textLength];

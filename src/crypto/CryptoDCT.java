@@ -1,3 +1,5 @@
+package crypto;
+
 import jpegDecoder.HuffmanDecode;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +41,6 @@ public class CryptoDCT {
             }
             index++;
         }
-        System.out.println("s");
         return bitArray;
     }
 

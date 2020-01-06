@@ -1,3 +1,5 @@
+package utils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,9 +9,9 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 
-public class Image {
+public class UtilsImage {
 
-    public Image() {
+    public UtilsImage() {
     }
 
     //getting image from file
