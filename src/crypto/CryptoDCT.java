@@ -1,6 +1,7 @@
 package crypto;
 
 import jpegDecoder.HuffmanDecode;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,27 +14,27 @@ public class CryptoDCT {
             10, 19, 23, 32, 39, 45, 52, 54,
             20, 22, 33, 38, 46, 51, 55, 60,
             21, 34, 37, 47, 50, 56, 59, 61,
-            35, 36, 48, 49, 57, 58, 62, 63 };
+            35, 36, 48, 49, 57, 58, 62, 63};
 
-    public int getPossibleLength (InputStream inputStream, int fileLength) throws IOException {
+    public int getPossibleLength(InputStream inputStream, int fileLength) throws IOException {
         byte[] carrier = new byte[fileLength];
         inputStream.read(carrier);
         HuffmanDecode huffmanDecode = new HuffmanDecode(carrier);
-        return huffmanDecode.decode().length/64/8;
+        return huffmanDecode.decode().length / 64 / 8;
     }
 
-    public int[] extractCoefficients (InputStream inputStream, int fileLength) throws IOException {
+    public int[] extractCoefficients(InputStream inputStream, int fileLength) throws IOException {
         byte[] carrier = new byte[fileLength];
         inputStream.read(carrier);
         HuffmanDecode huffmanDecode = new HuffmanDecode(carrier);
         return huffmanDecode.decode();
     }
 
-    public int[] extractLSBFromCoefficientsMessage (int[] coefficients) {
-        int[] bitArray = new int[coefficients.length/64];
+    public int[] extractLSBFromCoefficientsMessage(int[] coefficients) {
+        int[] bitArray = new int[coefficients.length / 64];
         int index = 0;
 
-        for (int i = zigZagHelper[23]; i < coefficients.length; i=i+64) {
+        for (int i = zigZagHelper[23]; i < coefficients.length; i = i + 64) {
             if (coefficients[i] % 2 == 0) {
                 bitArray[index] = 0;
             } else {
@@ -44,23 +45,23 @@ public class CryptoDCT {
         return bitArray;
     }
 
-    public byte [] getByteArrayDCT (int[] lsbValues) {
-        byte [] byteArrayChar = new byte[lsbValues.length/8];
+    public byte[] getByteArrayDCT(int[] lsbValues) {
+        byte[] byteArrayChar = new byte[lsbValues.length / 8];
         int index2 = 0;
-        for (int i = 0; i < lsbValues.length; i=i+8) {
-            if (i==Math.floor(lsbValues.length/8)*8 ) {
+        for (int i = 0; i < lsbValues.length; i = i + 8) {
+            if (i == Math.floor(lsbValues.length / 8) * 8) {
                 System.out.println("stop");
                 break;
             }
             String byteCharString = Integer.toString(lsbValues[i]);
-            byteCharString += Integer.toString(lsbValues[i+1]);
-            byteCharString += Integer.toString(lsbValues[i+2]);
-            byteCharString += Integer.toString(lsbValues[i+3]);
-            byteCharString += Integer.toString(lsbValues[i+4]);
-            byteCharString += Integer.toString(lsbValues[i+5]);
-            byteCharString += Integer.toString(lsbValues[i+6]);
-            byteCharString += Integer.toString(lsbValues[i+7]);
-            byte byteChar = (byte)Integer.parseInt(byteCharString, 2);
+            byteCharString += Integer.toString(lsbValues[i + 1]);
+            byteCharString += Integer.toString(lsbValues[i + 2]);
+            byteCharString += Integer.toString(lsbValues[i + 3]);
+            byteCharString += Integer.toString(lsbValues[i + 4]);
+            byteCharString += Integer.toString(lsbValues[i + 5]);
+            byteCharString += Integer.toString(lsbValues[i + 6]);
+            byteCharString += Integer.toString(lsbValues[i + 7]);
+            byte byteChar = (byte) Integer.parseInt(byteCharString, 2);
 
             byteArrayChar[index2] = byteChar;
             index2++;
@@ -68,7 +69,7 @@ public class CryptoDCT {
         return byteArrayChar;
     }
 
-    public String decodeDCT (byte[] messageBytes) {
+    public String decodeDCT(byte[] messageBytes) {
         return new String(messageBytes);
     }
 }

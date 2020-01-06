@@ -17,7 +17,7 @@ public class CryptoMain {
     private UtilsGeneral utilsGeneral = new UtilsGeneral();
     private char endCharDCT = '°';
 
-    public void code (int cryptoMode, Path pathSource, String message, int sourceMode) throws Exception {
+    public void code(int cryptoMode, Path pathSource, String message, int sourceMode) throws Exception {
         JpegEncoder jpegEncoder;
         UtilsImage utilsImage = new UtilsImage();
 
@@ -27,7 +27,7 @@ public class CryptoMain {
         if (cryptoMode == 0) {
             System.out.println("LSB code performed");
             BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
-            cryptoLSB.code(pathSource, sourceImage ,message, sourceMode);
+            cryptoLSB.code(pathSource, sourceImage, message, sourceMode);
 
         } else if (cryptoMode == 1) {
             System.out.println("DCT code performed");
@@ -35,7 +35,7 @@ public class CryptoMain {
             BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
             //jpg creation
             jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
-            jpegEncoder.Compress(message+endCharDCT);
+            jpegEncoder.Compress(message + endCharDCT);
             fileOutputStream.close();
 
         } else if (cryptoMode == 100) {
@@ -46,13 +46,13 @@ public class CryptoMain {
         }
     }
 
-    public String decode (Path path) throws IOException {
+    public String decode(Path path) throws IOException {
         int decodeMethod = getDecodeMethod(path);
 
         //for testing
         //decodeMethod = 0;
 
-        if (decodeMethod == 0 ) {
+        if (decodeMethod == 0) {
             System.out.println("LSB decode performed");
             return cryptoLSB.decode(path);
 
@@ -60,9 +60,9 @@ public class CryptoMain {
             System.out.println("DCT decode performed");
             File file = new File(String.valueOf(path));
             FileInputStream fileInputStream = new FileInputStream(file);
-            int [] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
-            int [] bitArray = cryptoDCT.extractLSBFromCoefficientsMessage(coefficients);
-            byte [] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
+            int[] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
+            int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessage(coefficients);
+            byte[] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
             String a = cryptoDCT.decodeDCT(byteArray);
             String b = utilsGeneral.trimFront(a, endCharDCT);
             return b;
@@ -72,11 +72,11 @@ public class CryptoMain {
         }
     }
 
-    public int codeMethod (BufferedImage sourceImage, String message, boolean isJpg) {
+    public int codeMethod(BufferedImage sourceImage, String message, boolean isJpg) {
         int charCapacityLSB, charCapacityDCT;
 
         //total number of pixels
-        charCapacityLSB = sourceImage.getHeight()*sourceImage.getWidth();
+        charCapacityLSB = sourceImage.getHeight() * sourceImage.getWidth();
         //total number of chars (Bytes) image can holds (each pixel can hold one bit of message)
         charCapacityLSB = charCapacityLSB / 8;
         //4 Bytes are used for length storing
@@ -86,10 +86,10 @@ public class CryptoMain {
 
         //total number of 8x8 squares of pixels in the image
         double height = sourceImage.getHeight();
-        int intHeight = (int) Math.round(height/8);
+        int intHeight = (int) Math.round(height / 8);
         double width = sourceImage.getWidth();
-        int intWidth = (int) Math.round(width/8);
-        charCapacityDCT = (intHeight*intWidth);
+        int intWidth = (int) Math.round(width / 8);
+        charCapacityDCT = (intHeight * intWidth);
         //R, G, B bands of 8x8 squares (each band cen holds one bit of message)
         charCapacityDCT = charCapacityDCT * 3;
         //8 bit is needed fo storing one char of message
@@ -102,9 +102,9 @@ public class CryptoMain {
         if (isJpg) {
             return 1;
         } else {
-            if (message.length()>charCapacityLSB) {
+            if (message.length() > charCapacityLSB) {
                 return 100;
-            } else if (message.length()>charCapacityDCT) {
+            } else if (message.length() > charCapacityDCT) {
                 return 0;
             } else {
                 return 1;
@@ -112,7 +112,7 @@ public class CryptoMain {
         }
     }
 
-    public int getDecodeMethod (Path path) {
+    public int getDecodeMethod(Path path) {
         int decodeMethod;
         if (isFileJpg(path)) {
             return 1;
@@ -121,7 +121,7 @@ public class CryptoMain {
         }
     }
 
-    public boolean isFileJpg (Path path) {
+    public boolean isFileJpg(Path path) {
         boolean isJpg;
 
         if (path.toString().endsWith(".jpg") || path.toString().endsWith(".jpeg")) {

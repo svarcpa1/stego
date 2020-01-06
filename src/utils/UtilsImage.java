@@ -21,7 +21,7 @@ public class UtilsImage {
     }
 
     //getting image from URL
-    public BufferedImage readImageURL(String urlPath){
+    public BufferedImage readImageURL(String urlPath) {
         BufferedImage bufferedImage;
         try {
             URL url = new URL(urlPath);
@@ -34,18 +34,18 @@ public class UtilsImage {
     }
 
     //get bytes array from image
-    public byte[] getBytesFromImage(BufferedImage image){
+    public byte[] getBytesFromImage(BufferedImage image) {
         WritableRaster writableRaster;
         DataBufferByte buffer;
 
         writableRaster = image.getRaster();
-        buffer = (DataBufferByte)writableRaster.getDataBuffer();
+        buffer = (DataBufferByte) writableRaster.getDataBuffer();
 
         return buffer.getData();
     }
 
     //new image creation
-    public BufferedImage getNewImage (BufferedImage oldImage) {
+    public BufferedImage getNewImage(BufferedImage oldImage) {
 
         //Represents an image with 8-bit RGB color components, corresponding to a Windows-style BGR color model
         //with the colors Blue, Green, and Red stored in 3 bytes
@@ -58,9 +58,9 @@ public class UtilsImage {
         return newImage;
     }
 
-    public String getImageOutName(Path path){
-        String fileName =  path.getFileName().toString();
-        String[] fileNameArray =  fileName.split("\\.");
+    public String getImageOutName(Path path) {
+        String fileName = path.getFileName().toString();
+        String[] fileNameArray = fileName.split("\\.");
         if (fileNameArray[1].equals("jpg") || fileNameArray[1].equals("jpeg")) {
             return fileNameArray[0] + "_output." + "png";
         } else {
@@ -68,9 +68,9 @@ public class UtilsImage {
         }
     }
 
-    public String getImageType(Path path){
-        String fileName =  path.getFileName().toString();
-        String[] fileNameArray =  fileName.split("\\.");
+    public String getImageType(Path path) {
+        String fileName = path.getFileName().toString();
+        String[] fileNameArray = fileName.split("\\.");
         if (fileNameArray[1].equals("jpg") || fileNameArray[1].equals("jpeg")) {
             return "png";
         } else {

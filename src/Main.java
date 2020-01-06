@@ -18,7 +18,7 @@ public class Main {
         String textToHide = "AHOJ";
 
         //selecting crypto method --------------------------------------------------------------------------------------
-        pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\lenna.png");
+        pathSource = Paths.get("C:\\_DATA-local\\WS_Java\\stego\\margot2.jpg");
         sourceImage = utilsImage.readImageFile(pathSource.toString());
         cryptoMode = cryptoMain.codeMethod(sourceImage, textToHide, false);
 

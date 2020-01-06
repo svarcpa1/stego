@@ -8,9 +8,9 @@ public class UtilsGeneral {
         String result = "";
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) != character) {
-                result = result+text.charAt(i);
+                result = result + text.charAt(i);
             } else {
-              return result;
+                return result;
             }
         }
         return result;
