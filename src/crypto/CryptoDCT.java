@@ -72,4 +72,19 @@ public class CryptoDCT {
     public String decodeDCT(byte[] messageBytes) {
         return new String(messageBytes);
     }
+
+    public int[] extractLSBFromCoefficientsMessageFirstChar(int[] coefficients) {
+        int[] bitArray = new int[8];
+        int index = 0;
+
+        for (int i = zigZagHelper[23]; i < zigZagHelper[23]+(64*8); i = i + 64) {
+            if (coefficients[i] % 2 == 0) {
+                bitArray[index] = 0;
+            } else {
+                bitArray[index] = 1;
+            }
+            index++;
+        }
+        return bitArray;
+    }
 }

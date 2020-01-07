@@ -16,6 +16,7 @@ public class CryptoMain {
     private CryptoDCT cryptoDCT = new CryptoDCT();
     private UtilsGeneral utilsGeneral = new UtilsGeneral();
     private char endCharDCT = '°';
+    private String startChar = "|";
 
     public void code(int cryptoMode, Path pathSource, String message, int sourceMode) throws Exception {
         JpegEncoder jpegEncoder;
@@ -27,7 +28,7 @@ public class CryptoMain {
         if (cryptoMode == 0) {
             System.out.println("LSB code performed");
             BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
-            cryptoLSB.code(pathSource, sourceImage, message, sourceMode);
+            cryptoLSB.code(pathSource, sourceImage, startChar + message, sourceMode);
 
         } else if (cryptoMode == 1) {
             System.out.println("DCT code performed");
@@ -35,7 +36,7 @@ public class CryptoMain {
             BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
             //jpg creation
             jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
-            jpegEncoder.Compress(message + endCharDCT);
+            jpegEncoder.Compress(startChar + message + endCharDCT);
             fileOutputStream.close();
 
         } else if (cryptoMode == 100) {
@@ -47,7 +48,7 @@ public class CryptoMain {
     }
 
     public String decode(Path path) throws IOException {
-        int decodeMethod = getDecodeMethod(path);
+        int decodeMethod = decodeMethod(path);
 
         //for testing
         //decodeMethod = 0;
@@ -75,29 +76,19 @@ public class CryptoMain {
     public int codeMethod(BufferedImage sourceImage, String message, boolean isJpg) {
         int charCapacityLSB, charCapacityDCT;
 
-        //total number of pixels
+        //TODO length -1 start char
         charCapacityLSB = sourceImage.getHeight() * sourceImage.getWidth();
-        //total number of chars (Bytes) image can holds (each pixel can hold one bit of message)
         charCapacityLSB = charCapacityLSB / 8;
-        //4 Bytes are used for length storing
         charCapacityLSB = charCapacityLSB - 4;
-        //result is number of chars that can be inserted
-        //for image 64x64px the result is 508
 
-        //total number of 8x8 squares of pixels in the image
         double height = sourceImage.getHeight();
         int intHeight = (int) Math.round(height / 8);
         double width = sourceImage.getWidth();
         int intWidth = (int) Math.round(width / 8);
         charCapacityDCT = (intHeight * intWidth);
-        //R, G, B bands of 8x8 squares (each band cen holds one bit of message)
         charCapacityDCT = charCapacityDCT * 3;
-        //8 bit is needed fo storing one char of message
         charCapacityDCT = charCapacityDCT / 8;
-        //one Byte is used for determining text length
         charCapacityDCT = charCapacityDCT - 1;
-        //result is number of chars that can be inserted
-        //for image 64x64px the result is 23
 
         if (isJpg) {
             return 1;
@@ -112,8 +103,7 @@ public class CryptoMain {
         }
     }
 
-    public int getDecodeMethod(Path path) {
-        int decodeMethod;
+    public int decodeMethod(Path path) {
         if (isFileJpg(path)) {
             return 1;
         } else {
@@ -130,6 +120,34 @@ public class CryptoMain {
             isJpg = false;
         }
         return isJpg;
+    }
+
+    public String decideCodeOrDecode(Path path) throws IOException {
+        int decodeMethod = decodeMethod(path);
+        String firstChar = "";
+
+        if (decodeMethod == 0) {
+            //get first char using LSB
+            //if char match with defined -> decode
+            firstChar = cryptoLSB.decodeFirstChar(path);
+
+        } else {
+            //get first char using DCT
+            //if char match with defined -> decode
+            File file = new File(String.valueOf(path));
+            FileInputStream fileInputStream = new FileInputStream(file);
+            int[] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
+            int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessageFirstChar(coefficients);
+            byte[] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
+            firstChar = cryptoDCT.decodeDCT(byteArray);
+        }
+
+
+        if (firstChar.equals(startChar)) {
+            return "decode";
+        } else {
+            return "code";
+        }
     }
 }
 

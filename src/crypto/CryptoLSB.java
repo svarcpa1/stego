@@ -106,4 +106,28 @@ public class CryptoLSB {
         }
         return result;
     }
+
+    public String decodeFirstChar(@NotNull Path path) throws IOException {
+        byte[] decodedByteArray;
+
+        BufferedImage imageToBeDecoded = utilsImage.readImageFile(path.toString());
+        BufferedImage newImageToBeDecoded = utilsImage.getNewImage(imageToBeDecoded);
+        decodedByteArray = extractTextFromImageFirstChar(newImageToBeDecoded);
+
+        return new String(decodedByteArray);
+    }
+
+    public byte[] extractTextFromImageFirstChar(BufferedImage image) {
+        initialShift = 32;
+        byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
+        byte[] result = new byte[1];
+
+        for (int i = 0; i < result.length; i++) {
+            for (int j = 0; j <= 7; j++) {
+                initialShift++;
+                result[i] = (byte) ((result[i] << 1) | (imageByteArray[initialShift] & 1));
+            }
+        }
+        return result;
+    }
 }
