@@ -8,6 +8,7 @@ import java.awt.image.WritableRaster;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UtilsImage {
 
@@ -68,13 +69,22 @@ public class UtilsImage {
         }
     }
 
-    public String getImageType(Path path) {
+    public String getImageType(String pathString) {
+        Path path = Paths.get(pathString);
         String fileName = path.getFileName().toString();
         String[] fileNameArray = fileName.split("\\.");
         if (fileNameArray[1].equals("jpg") || fileNameArray[1].equals("jpeg")) {
             return "png";
         } else {
             return fileNameArray[1];
+        }
+    }
+
+    public int getImageTypeURL(String pathString) {
+        if (pathString.contains(".jpg") || pathString.contains(".jpeg")) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 }

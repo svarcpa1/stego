@@ -1,6 +1,7 @@
 package crypto;
 
 import org.jetbrains.annotations.NotNull;
+import utils.UtilsGeneral;
 import utils.UtilsImage;
 import utils.UtilsText;
 
@@ -13,12 +14,13 @@ import java.nio.file.Path;
 public class CryptoLSB {
     private UtilsImage utilsImage = new UtilsImage();
     private UtilsText utilsText = new UtilsText();
+    private UtilsGeneral utilsGeneral = new UtilsGeneral();
     private int initialShift = 32;
 
     public CryptoLSB() {
     }
 
-    public void code(Path path, BufferedImage sourceImage, String message, int sourceMode) throws Exception {
+    public void code(String path, BufferedImage sourceImage, String message) throws Exception {
         //duplicates source image - more stable
         BufferedImage cryptoImage = utilsImage.getNewImage(sourceImage);
         //add encrypted text to source image
@@ -27,7 +29,7 @@ public class CryptoLSB {
 
         //creates file
         File outputFile;
-        if (sourceMode == 0) {
+        if (!utilsGeneral.isImageLoadedFromURL(path)) {
             outputFile = new File("output." + utilsImage.getImageType(path));
             ImageIO.write(cryptoImage, utilsImage.getImageType(path), outputFile);
         } else {
@@ -36,10 +38,10 @@ public class CryptoLSB {
         }
     }
 
-    public String decode(@NotNull Path path) throws IOException {
+    public String decode(@NotNull String path) throws IOException {
         byte[] decodedByteArray;
 
-        BufferedImage imageToBeDecoded = utilsImage.readImageFile(path.toString());
+        BufferedImage imageToBeDecoded = utilsImage.readImageFile(path);
         BufferedImage newImageToBeDecoded = utilsImage.getNewImage(imageToBeDecoded);
         decodedByteArray = extractTextFromImage(newImageToBeDecoded);
 
@@ -107,10 +109,15 @@ public class CryptoLSB {
         return result;
     }
 
-    public String decodeFirstChar(@NotNull Path path) throws IOException {
+    public String decodeFirstChar(@NotNull String path) throws IOException {
         byte[] decodedByteArray;
 
-        BufferedImage imageToBeDecoded = utilsImage.readImageFile(path.toString());
+        BufferedImage imageToBeDecoded;
+        if (utilsGeneral.isImageLoadedFromURL(path)) {
+            imageToBeDecoded = utilsImage.readImageURL(path);
+        } else {
+            imageToBeDecoded = utilsImage.readImageFile(path);
+        }
         BufferedImage newImageToBeDecoded = utilsImage.getNewImage(imageToBeDecoded);
         decodedByteArray = extractTextFromImageFirstChar(newImageToBeDecoded);
 

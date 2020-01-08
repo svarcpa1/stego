@@ -21,4 +21,12 @@ public class UtilsGeneral {
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
     }
+
+    public boolean isImageLoadedFromURL(String pathString) {
+        if (pathString.contains("https://") || pathString.contains("http://")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

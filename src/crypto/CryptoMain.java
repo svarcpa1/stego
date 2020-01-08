@@ -15,47 +15,65 @@ public class CryptoMain {
     private CryptoLSB cryptoLSB = new CryptoLSB();
     private CryptoDCT cryptoDCT = new CryptoDCT();
     private UtilsGeneral utilsGeneral = new UtilsGeneral();
+    private UtilsImage utilsImage = new UtilsImage();
     private char endCharDCT = '°';
     private String startChar = "|";
 
-    public void code(int cryptoMode, Path pathSource, String message, int sourceMode) throws Exception {
+    public void code(int cryptoMode, String pathSource, String message) throws Exception {
         JpegEncoder jpegEncoder;
         UtilsImage utilsImage = new UtilsImage();
 
-        //for testing
-        //cryptoMode=0;
+        if (utilsGeneral.isImageLoadedFromURL(pathSource)) {
+            if (cryptoMode == 0) {
+                System.out.println("LSB code performed - URL");
+                BufferedImage sourceImage = utilsImage.readImageURL(pathSource);
+                cryptoLSB.code(pathSource, sourceImage, startChar + message);
+            } else  if (cryptoMode == 1) {
+                System.out.println("DCT code performed - URL");
+                FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
+                BufferedImage sourceImage = utilsImage.readImageURL(pathSource);
+                //jpg creation
+                jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
+                jpegEncoder.Compress(startChar + message + endCharDCT);
+                fileOutputStream.close();
+            } else if (cryptoMode == 100) {
+                System.out.println("Text is too long for this image");
 
-        if (cryptoMode == 0) {
-            System.out.println("LSB code performed");
-            BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
-            cryptoLSB.code(pathSource, sourceImage, startChar + message, sourceMode);
-
-        } else if (cryptoMode == 1) {
-            System.out.println("DCT code performed");
-            FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
-            BufferedImage sourceImage = utilsImage.readImageFile(pathSource.toString());
-            //jpg creation
-            jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
-            jpegEncoder.Compress(startChar + message + endCharDCT);
-            fileOutputStream.close();
-
-        } else if (cryptoMode == 100) {
-            System.out.println("Text is too long for this image");
+            } else {
+                System.out.println("Unexpected error");
+            }
 
         } else {
-            System.out.println("Unexpected error");
+            if (cryptoMode == 0) {
+                System.out.println("LSB code performed");
+                BufferedImage sourceImage = utilsImage.readImageFile(pathSource);
+                cryptoLSB.code(pathSource, sourceImage, startChar + message);
+
+            } else if (cryptoMode == 1) {
+                System.out.println("DCT code performed");
+                FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
+                BufferedImage sourceImage = utilsImage.readImageFile(pathSource);
+                //jpg creation
+                jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
+                jpegEncoder.Compress(startChar + message + endCharDCT);
+                fileOutputStream.close();
+
+            } else if (cryptoMode == 100) {
+                System.out.println("Text is too long for this image");
+
+            } else {
+                System.out.println("Unexpected error");
+            }
         }
     }
 
-    public String decode(Path path) throws IOException {
-        int decodeMethod = decodeMethod(path);
+    public String decode(String path) throws IOException {
 
-        //for testing
-        //decodeMethod = 0;
+        int decodeMethod = decodeMethod(path);
 
         if (decodeMethod == 0) {
             System.out.println("LSB decode performed");
-            return cryptoLSB.decode(path);
+            return cryptoLSB.decode(path).substring(1);
 
         } else if (decodeMethod == 1) {
             System.out.println("DCT decode performed");
@@ -65,7 +83,7 @@ public class CryptoMain {
             int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessage(coefficients);
             byte[] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
             String a = cryptoDCT.decodeDCT(byteArray);
-            String b = utilsGeneral.trimFront(a, endCharDCT);
+            String b = utilsGeneral.trimFront(a, endCharDCT).substring(1);
             return b;
 
         } else {
@@ -73,13 +91,13 @@ public class CryptoMain {
         }
     }
 
-    public int codeMethod(BufferedImage sourceImage, String message, boolean isJpg) {
+    public int codeMethod(BufferedImage sourceImage, String message) {
         int charCapacityLSB, charCapacityDCT;
 
-        //TODO length -1 start char
         charCapacityLSB = sourceImage.getHeight() * sourceImage.getWidth();
         charCapacityLSB = charCapacityLSB / 8;
         charCapacityLSB = charCapacityLSB - 4;
+        charCapacityLSB = charCapacityLSB - 1;
 
         double height = sourceImage.getHeight();
         int intHeight = (int) Math.round(height / 8);
@@ -88,33 +106,41 @@ public class CryptoMain {
         charCapacityDCT = (intHeight * intWidth);
         charCapacityDCT = charCapacityDCT * 3;
         charCapacityDCT = charCapacityDCT / 8;
-        charCapacityDCT = charCapacityDCT - 1;
+        charCapacityDCT = charCapacityDCT - 2;
 
-        if (isJpg) {
-            return 1;
+        if (message.length() > charCapacityLSB) {
+            return 100;
+        } else if (message.length() > charCapacityDCT) {
+            return 0;
         } else {
-            if (message.length() > charCapacityLSB) {
-                return 100;
-            } else if (message.length() > charCapacityDCT) {
-                return 0;
-            } else {
+            return 1;
+        }
+    }
+
+    public int decodeMethod(String path) {
+        if (utilsGeneral.isImageLoadedFromURL(path)) {
+            System.out.println("URL file");
+            if (utilsImage.getImageTypeURL(path)==1) {
+                //dct
                 return 1;
+            } else {
+                //lsb
+                return 0;
+            }
+        } else {
+            System.out.println("File file");
+            if (isFileJpg(path)) {
+                return 1;
+            } else {
+                return 0;
             }
         }
     }
 
-    public int decodeMethod(Path path) {
-        if (isFileJpg(path)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    public boolean isFileJpg(Path path) {
+    public boolean isFileJpg(String path) {
         boolean isJpg;
 
-        if (path.toString().endsWith(".jpg") || path.toString().endsWith(".jpeg")) {
+        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) {
             isJpg = true;
         } else {
             isJpg = false;
@@ -122,19 +148,19 @@ public class CryptoMain {
         return isJpg;
     }
 
-    public String decideCodeOrDecode(Path path) throws IOException {
-        int decodeMethod = decodeMethod(path);
+    public String decideCodeOrDecode(String pathString) throws IOException {
+        int decodeMethod = decodeMethod(pathString);
         String firstChar = "";
 
         if (decodeMethod == 0) {
             //get first char using LSB
             //if char match with defined -> decode
-            firstChar = cryptoLSB.decodeFirstChar(path);
+            firstChar = cryptoLSB.decodeFirstChar(pathString);
 
         } else {
             //get first char using DCT
             //if char match with defined -> decode
-            File file = new File(String.valueOf(path));
+            File file = new File(String.valueOf(pathString));
             FileInputStream fileInputStream = new FileInputStream(file);
             int[] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
             int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessageFirstChar(coefficients);
@@ -151,6 +177,3 @@ public class CryptoMain {
     }
 }
 
-//TODO url
-//URL url = new URL("https://www.biggmagg.cz/system/newsitems/perexes/000/007/443/article/DHsDCSMzQr2VeCg0KaNvxg.jpg?1561098480");
-//URL url2 = new URL("https://nofilmschool.com/sites/default/files/styles/article_wide/public/once_upon_a_time_in_hollywood_margot_robbie.jpg?itok=r8TKHtRn");
