@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class CryptoMain {
     private CryptoLSB cryptoLSB = new CryptoLSB();
@@ -119,7 +118,6 @@ public class CryptoMain {
 
     public int decodeMethod(String path) {
         if (utilsGeneral.isImageLoadedFromURL(path)) {
-            System.out.println("URL file");
             if (utilsImage.getImageTypeURL(path)==1) {
                 //dct
                 return 1;
@@ -128,7 +126,6 @@ public class CryptoMain {
                 return 0;
             }
         } else {
-            System.out.println("File file");
             if (isFileJpg(path)) {
                 return 1;
             } else {

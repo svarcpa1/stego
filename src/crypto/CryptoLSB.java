@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class CryptoLSB {
     private UtilsImage utilsImage = new UtilsImage();

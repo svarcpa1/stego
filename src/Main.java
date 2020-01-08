@@ -12,36 +12,36 @@ public class Main {
         UtilsImage utilsImage = new UtilsImage();
         UtilsGeneral utilsGeneral = new UtilsGeneral();
         int cryptoMode; // 0 -> LSB; 1 -> DCT; 100 -> error
-        String pathSource, pathDecode, pathDecide;
+        String pathToImage;
         BufferedImage sourceImage;
 
-        //decode or code -----------------------------------------------------------------------------------------------
-        //pathDecide = "C:\\_DATA-local\\WS_Java\\stego\\lenna.png";
-        pathDecide = "https://pbs.twimg.com/profile_images/1131115264563662848/7b4Wvlgv.png";
-        String decide = cryptoMain.decideCodeOrDecode(pathDecide);
-        System.out.println(decide);
+        //pathToImage = "https://pbs.twimg.com/profile_images/1131115264563662848/7b4Wvlgv.png";
+        pathToImage = "C:\\_DATA-local\\WS_Java\\stego\\output.jpg";
 
-        //message definition -------------------------------------------------------------------------------------------
-        String textToHide = "AHOJ";
+        String decide = cryptoMain.decideCodeOrDecode(pathToImage);
 
-        //selecting crypto method --------------------------------------------------------------------------------------
-        //pathSource = "C:\\_DATA-local\\WS_Java\\stego\\lenna.png";
-        pathSource = "https://pbs.twimg.com/profile_images/1131115264563662848/7b4Wvlgv.png";
-        if (utilsGeneral.isImageLoadedFromURL(pathSource)) {
-            sourceImage = utilsImage.readImageURL(pathSource);
+        if(decide == "code") {
+            System.out.println("CODE");
+            String textToHide = "AHOJ";
+
+            if (utilsGeneral.isImageLoadedFromURL(pathToImage)) {
+                sourceImage = utilsImage.readImageURL(pathToImage);
+            } else {
+                sourceImage = utilsImage.readImageFile(pathToImage);
+            }
+
+            cryptoMode = cryptoMain.codeMethod(sourceImage, textToHide);
+            cryptoMain.code(cryptoMode, pathToImage, textToHide);
+
         } else {
-            sourceImage = utilsImage.readImageFile(pathSource);
+            System.out.println("DECODE");
+            //TODO decode URL
+            if (!utilsGeneral.isImageLoadedFromURL(pathToImage)) {
+                String message = cryptoMain.decode(pathToImage);
+                System.out.println(message);
+            } else {
+                System.out.println("URL address cannot be decoded yet");
+            }
         }
-
-        cryptoMode = cryptoMain.codeMethod(sourceImage, textToHide);
-
-        //crypto performing --------------------------------------------------------------------------------------------
-        cryptoMain.code(cryptoMode, pathSource, textToHide);
-
-        //decode performing --------------------------------------------------------------------------------------------
-        //TODO decode URL
-        pathDecode = "C:\\_DATA-local\\WS_Java\\stego\\output.jpg";
-        String message = cryptoMain.decode(pathDecode);
-        System.out.println(message);
     }
 }
