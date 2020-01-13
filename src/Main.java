@@ -3,11 +3,21 @@ import crypto.CryptoMain;
 import utils.UtilsGeneral;
 import utils.UtilsImage;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
+        Gui gui = new Gui();
+        JFrame jFrame = new JFrame("SMART SteGo");
+        jFrame.setContentPane(gui.getjPanel());
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.pack();
+        jFrame.setVisible(true);
+    }
+
+    public void performSteganography(String path, String messageFromGui) throws Exception {
         CryptoMain cryptoMain = new CryptoMain();
         UtilsImage utilsImage = new UtilsImage();
         UtilsGeneral utilsGeneral = new UtilsGeneral();
@@ -15,14 +25,12 @@ public class Main {
         String pathToImage;
         BufferedImage sourceImage;
 
-        //pathToImage = "https://pbs.twimg.com/profile_images/1131115264563662848/7b4Wvlgv.png";
-        pathToImage = "C:\\_DATA-local\\WS_Java\\stego\\output.jpg";
-
+        pathToImage = path;
         String decide = cryptoMain.decideCodeOrDecode(pathToImage);
 
         if(decide == "code") {
             System.out.println("CODE");
-            String textToHide = "AHOJ";
+            String textToHide = messageFromGui;
 
             if (utilsGeneral.isImageLoadedFromURL(pathToImage)) {
                 sourceImage = utilsImage.readImageURL(pathToImage);

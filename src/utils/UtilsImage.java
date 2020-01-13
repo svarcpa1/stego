@@ -52,7 +52,6 @@ public class UtilsImage {
         //with the colors Blue, Green, and Red stored in 3 bytes
         BufferedImage newImage = new BufferedImage(oldImage.getWidth(), oldImage.getHeight(),
                 BufferedImage.TYPE_3BYTE_BGR);
-        //TODO
         Graphics2D graphics2D = newImage.createGraphics();
         graphics2D.drawRenderedImage(oldImage, null);
 
