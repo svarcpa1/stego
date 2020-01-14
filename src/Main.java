@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 
         Gui gui = new Gui();
-        JFrame jFrame = new JFrame("SMART SteGo");
+        JFrame jFrame = new JFrame("SMART StegGo");
         jFrame.setContentPane(gui.getjPanel());
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.pack();
@@ -39,13 +39,22 @@ public class Main {
             }
 
             cryptoMode = cryptoMain.codeMethod(sourceImage, textToHide);
+            cryptoMode = 0;
+            long startTime = System.nanoTime();
             cryptoMain.code(cryptoMode, pathToImage, textToHide);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime)/1000000;
+            System.out.println("duration code: "+duration);
 
         } else {
             System.out.println("DECODE");
             //TODO decode URL
             if (!utilsGeneral.isImageLoadedFromURL(pathToImage)) {
+                long startTime = System.nanoTime();
                 String message = cryptoMain.decode(pathToImage);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                System.out.println("duration decode: "+duration);
                 System.out.println(message);
             } else {
                 System.out.println("URL address cannot be decoded yet");

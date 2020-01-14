@@ -81,9 +81,9 @@ public class CryptoMain {
             int[] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
             int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessage(coefficients);
             byte[] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
-            String a = cryptoDCT.decodeDCT(byteArray);
-            String b = utilsGeneral.trimFront(a, endCharDCT).substring(1);
-            return b;
+            String messageFull = cryptoDCT.decodeDCT(byteArray);
+            String messageTrimmed = utilsGeneral.trimFront(messageFull, endCharDCT).substring(1);
+            return messageTrimmed;
 
         } else {
             return "Unexpected error";

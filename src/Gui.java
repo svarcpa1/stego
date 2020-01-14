@@ -19,10 +19,15 @@ public class Gui extends Canvas {
         performSteganographyButton.addActionListener(e -> {
             Main main = new Main();
             try {
-                if(filePathTextArea.getText().isEmpty()) {
-                    main.performSteganography(path, messageTextArea.getText());
+                if (messageTextArea.getText().startsWith("|") || messageTextArea.getText().endsWith("°")) {
+                    messageTextArea.setText("");
+                    JOptionPane.showMessageDialog(jPanel, "This is not allowed character to start/end your message");
                 } else {
-                    main.performSteganography(filePathTextArea.getText(), messageTextArea.getText());
+                    if(filePathTextArea.getText().isEmpty()) {
+                        main.performSteganography(path, messageTextArea.getText());
+                    } else {
+                        main.performSteganography(filePathTextArea.getText(), messageTextArea.getText());
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -34,8 +39,9 @@ public class Gui extends Canvas {
             int action = jFileChooser.showOpenDialog(null);
             if (action == JFileChooser.APPROVE_OPTION) {
                 filePathTextArea.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+
             } else {
-                filePathTextArea.setText("the user cancelled the operation");
+                filePathTextArea.setText("");
             }
         });
 
