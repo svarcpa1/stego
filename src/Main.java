@@ -17,7 +17,7 @@ public class Main {
         jFrame.setVisible(true);
     }
 
-    public void performSteganography(String path, String messageFromGui) throws Exception {
+    public void performSteganography(String path, BufferedImage placeholder, String messageFromGui) throws Exception {
         CryptoMain cryptoMain = new CryptoMain();
         UtilsImage utilsImage = new UtilsImage();
         UtilsGeneral utilsGeneral = new UtilsGeneral();
@@ -32,16 +32,25 @@ public class Main {
             System.out.println("CODE");
             String textToHide = messageFromGui;
 
-            if (utilsGeneral.isImageLoadedFromURL(pathToImage)) {
-                sourceImage = utilsImage.readImageURL(pathToImage);
+            if (placeholder!=null) {
+                sourceImage = placeholder;
             } else {
-                sourceImage = utilsImage.readImageFile(pathToImage);
+                if (utilsGeneral.isImageLoadedFromURL(pathToImage)) {
+                    sourceImage = utilsImage.readImageURL(pathToImage);
+                } else {
+                    sourceImage = utilsImage.readImageFile(pathToImage);
+                }
             }
 
             cryptoMode = cryptoMain.codeMethod(sourceImage, textToHide);
-            cryptoMode = 0;
             long startTime = System.nanoTime();
-            cryptoMain.code(cryptoMode, pathToImage, textToHide);
+
+            if (placeholder!=null) {
+                cryptoMain.code(cryptoMode, pathToImage, placeholder, textToHide);
+            } else {
+                cryptoMain.code(cryptoMode, pathToImage, null, textToHide);
+            }
+
             long endTime = System.nanoTime();
             long duration = (endTime - startTime)/1000000;
             System.out.println("duration code: "+duration);

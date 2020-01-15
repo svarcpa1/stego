@@ -18,19 +18,33 @@ public class CryptoMain {
     private char endCharDCT = '°';
     private String startChar = "|";
 
-    public void code(int cryptoMode, String pathSource, String message) throws Exception {
+    public void code(int cryptoMode, String pathSource, BufferedImage placeholder,  String message) throws Exception {
         JpegEncoder jpegEncoder;
         UtilsImage utilsImage = new UtilsImage();
 
         if (utilsGeneral.isImageLoadedFromURL(pathSource)) {
             if (cryptoMode == 0) {
                 System.out.println("LSB code performed - URL");
-                BufferedImage sourceImage = utilsImage.readImageURL(pathSource);
+
+                BufferedImage sourceImage;
+                if (placeholder == null) {
+                    sourceImage = utilsImage.readImageURL(pathSource);
+                } else {
+                    sourceImage = placeholder;
+                }
+
                 cryptoLSB.code(pathSource, sourceImage, startChar + message);
             } else  if (cryptoMode == 1) {
                 System.out.println("DCT code performed - URL");
                 FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
-                BufferedImage sourceImage = utilsImage.readImageURL(pathSource);
+
+                BufferedImage sourceImage;
+                if (placeholder == null) {
+                    sourceImage = utilsImage.readImageURL(pathSource);
+                } else {
+                    sourceImage = placeholder;
+                }
+
                 //jpg creation
                 jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
                 jpegEncoder.Compress(startChar + message + endCharDCT);
