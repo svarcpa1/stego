@@ -1,3 +1,4 @@
+import crypto.CryptoMain;
 import utils.UtilsGeneral;
 import utils.UtilsImage;
 
@@ -20,6 +21,7 @@ public class Gui extends Canvas {
     private JButton anotherImageButton;
     private String path = "https://picsum.photos/400/200";
     private BufferedImage placeholderBufferedImage;
+    private CryptoMain cryptoMain = new CryptoMain();
 
     public Gui() {
 
@@ -66,6 +68,17 @@ public class Gui extends Canvas {
                         Image image = imageIcon.getImage();
                         Image scaledImage = image.getScaledInstance(400, 200,  java.awt.Image.SCALE_SMOOTH);
                         iconLabel.setIcon(new ImageIcon(scaledImage));
+
+                        //show hidden message if is
+                        String decide = cryptoMain.decideCodeOrDecode(filePathTextArea.getText());
+                        if (decide == "decode") {
+                            if (!utilsGeneral.isImageLoadedFromURL(filePathTextArea.getText())) {
+                                String message = cryptoMain.decode(filePathTextArea.getText());
+                                messageTextArea.setText(message);
+                            } else {
+                                System.out.println("URL address cannot be decoded yet");
+                            }
+                        }
 
                     } catch (IOException ex) {
                         ex.printStackTrace();

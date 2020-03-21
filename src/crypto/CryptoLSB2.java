@@ -10,13 +10,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class CryptoLSB {
+public class CryptoLSB2 {
     private UtilsImage utilsImage = new UtilsImage();
     private UtilsText utilsText = new UtilsText();
     private UtilsGeneral utilsGeneral = new UtilsGeneral();
     private int initialShift = 32;
 
-    public CryptoLSB() {
+    public CryptoLSB2() {
     }
 
     public void code(String path, BufferedImage sourceImage, String message) throws Exception {
@@ -54,17 +54,18 @@ public class CryptoLSB {
         byte[] textLengthByteArray = utilsText.getTextLength(textByteArray.length);
 
         for (int i = 0; i < textLengthByteArray.length; i++) {
-            for (int j = 7; j >= 0; j--) {
+            for (int j = 6; j >= 0; j=j-2) {
                 imageByteArray[initialShift] =
-                        (byte) ((imageByteArray[initialShift] & 0xFE) | ((int) textLengthByteArray[i] >>> j) & 1);
+                        (byte) ((imageByteArray[initialShift] & 0xFC) | ((int) textLengthByteArray[i] >>> j) & 3);
                 initialShift++;
             }
         }
         return image;
     }
 
+    //edited
     public BufferedImage addTextToImage(BufferedImage image, String message) {
-        initialShift = 32;
+        initialShift = 16;
         byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         byte[] textByteArray = utilsText.getBytesFromText(message);
 
@@ -72,10 +73,10 @@ public class CryptoLSB {
             throw new IllegalArgumentException("Image is too small for the text");
         }
         for (byte b : textByteArray) {
-            for (int j = 7; j >= 0; j--) {
+            for (int j = 6; j >= 0; j=j-2) {
                 initialShift++;
                 imageByteArray[initialShift] =
-                        (byte) ((imageByteArray[initialShift] & 0xFE) | ((int) b >>> j) & 1);
+                        (byte) ((imageByteArray[initialShift] & 0xFC) | ((int) b >>> j) & 3);
             }
         }
         return image;
@@ -84,23 +85,23 @@ public class CryptoLSB {
     public int extractTextLength(byte[] image) {
         int textLength = 0;
         //bytes 0-3 for text length
-        for (int i = 0; i < 32; i++) {
-            textLength = (textLength << 1) | (image[i] & 1);
+        for (int i = 0; i < 16; i++) {
+            textLength = (textLength << 2) | (image[i] & 3);
         }
         return textLength;
     }
 
     public byte[] extractTextFromImage(BufferedImage image) {
-        initialShift = 32;
+        initialShift = 16;
         byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         //size of return array depends on length of hidden text
         int textLength = extractTextLength(imageByteArray);
         byte[] result = new byte[textLength];
 
         for (int i = 0; i < result.length; i++) {
-            for (int j = 0; j <= 7; j++) {
+            for (int j = 0; j <= 6; j=j+2) {
                 initialShift++;
-                result[i] = (byte) ((result[i] << 1) | (imageByteArray[initialShift] & 1));
+                result[i] = (byte) ((result[i] << 2) | (imageByteArray[initialShift] & 3));
             }
         }
         return result;
@@ -122,14 +123,14 @@ public class CryptoLSB {
     }
 
     public byte[] extractTextFromImageFirstChar(BufferedImage image) {
-        initialShift = 32;
+        initialShift = 16;
         byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);
         byte[] result = new byte[1];
 
         for (int i = 0; i < result.length; i++) {
-            for (int j = 0; j <= 7; j++) {
+            for (int j = 0; j <= 6; j=j+2) {
                 initialShift++;
-                result[i] = (byte) ((result[i] << 1) | (imageByteArray[initialShift] & 1));
+                result[i] = (byte) ((result[i] << 2) | (imageByteArray[initialShift] & 3));
             }
         }
         return result;
