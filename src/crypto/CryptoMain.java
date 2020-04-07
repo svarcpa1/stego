@@ -19,29 +19,36 @@ public class CryptoMain {
     private char endCharDCT = '°';
     private String startChar = "|";
     private boolean lsb2 = false;
+    private String messageLog = "";
 
-    public void code(int cryptoMode, String pathSource, BufferedImage placeholder,  String message) throws Exception {
+    public String getMessageLog() {
+        return messageLog;
+    }
+
+    public void code(int cryptoMode, String pathSource, BufferedImage placeholder, String message) throws Exception {
         JpegEncoder jpegEncoder;
         UtilsImage utilsImage = new UtilsImage();
+        BufferedImage sourceImage;
 
         if (utilsGeneral.isImageLoadedFromURL(pathSource)) {
             if (cryptoMode == 0) {
-                System.out.println("LSB code performed - URL");
 
-                BufferedImage sourceImage;
                 if (placeholder == null) {
                     sourceImage = utilsImage.readImageURL(pathSource);
                 } else {
                     sourceImage = placeholder;
                 }
 
+                long startTime = System.nanoTime();
                 cryptoLSB.code(pathSource, sourceImage, startChar + message);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB code performed - URL (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else  if (cryptoMode == 1) {
-                System.out.println("DCT code performed - URL");
                 FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
 
-                BufferedImage sourceImage;
                 if (placeholder == null) {
                     sourceImage = utilsImage.readImageURL(pathSource);
                 } else {
@@ -49,51 +56,74 @@ public class CryptoMain {
                 }
 
                 //jpg creation
+                long startTime = System.nanoTime();
                 jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
                 jpegEncoder.Compress(startChar + message + endCharDCT);
                 fileOutputStream.close();
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "DCT code performed - URL (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else if (cryptoMode == 100) {
                 System.out.println("Text is too long for this image");
 
             } else if (cryptoMode == 3) {
-                System.out.println("LSB2 code performed - URL");
-
-                BufferedImage sourceImage;
                 if (placeholder == null) {
                     sourceImage = utilsImage.readImageURL(pathSource);
                 } else {
                     sourceImage = placeholder;
                 }
 
+                long startTime = System.nanoTime();
                 cryptoLSB2.code(pathSource, sourceImage, startChar + message);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB2 code performed - URL (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else {
                 System.out.println("Unexpected error");
             }
 
         } else {
+            if (placeholder == null) {
+                sourceImage = utilsImage.readImageFile(pathSource);
+            } else {
+                sourceImage = placeholder;
+            }
+
             if (cryptoMode == 0) {
-                System.out.println("LSB code performed");
-                BufferedImage sourceImage = utilsImage.readImageFile(pathSource);
+                long startTime = System.nanoTime();
                 cryptoLSB.code(pathSource, sourceImage, startChar + message);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB code performed (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else if (cryptoMode == 1) {
-                System.out.println("DCT code performed");
                 FileOutputStream fileOutputStream = new FileOutputStream(new File("output.jpg"));
-                BufferedImage sourceImage = utilsImage.readImageFile(pathSource);
+
                 //jpg creation
+                long startTime = System.nanoTime();
                 jpegEncoder = new JpegEncoder(sourceImage, 100, fileOutputStream);
                 jpegEncoder.Compress(startChar + message + endCharDCT);
                 fileOutputStream.close();
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "DCT code performed (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else if (cryptoMode == 100) {
                 System.out.println("Text is too long for this image");
 
             } else if (cryptoMode == 3){
-                System.out.println("LSB2 code performed");
-                BufferedImage sourceImage = utilsImage.readImageFile(pathSource);
+                long startTime = System.nanoTime();
                 cryptoLSB2.code(pathSource, sourceImage, startChar + message);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB2 code performed (in "+ duration +")";
+                System.out.println(messageLog);
 
             } else {
                 System.out.println("Unexpected error");
@@ -102,29 +132,42 @@ public class CryptoMain {
     }
 
     public String decode(String path) throws IOException {
-
         int decodeMethod = decodeMethod(path);
-
+        String hiddenMessage;
         if (decodeMethod == 0) {
             if(lsb2){
-                System.out.println("LSB2 decode performed");
-                return cryptoLSB2.decode(path).substring(1);
+                long startTime = System.nanoTime();
+                hiddenMessage = cryptoLSB2.decode(path).substring(1);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB2 decode performed (in "+ duration +")";
+                System.out.println(messageLog);
+                return hiddenMessage;
 
             } else {
-                System.out.println("LSB decode performed");
-                return cryptoLSB.decode(path).substring(1);
+                long startTime = System.nanoTime();
+                hiddenMessage =  cryptoLSB.decode(path).substring(1);
+                long endTime = System.nanoTime();
+                long duration = (endTime - startTime)/1000000;
+                messageLog = "LSB decode performed (in "+ duration +")";
+                System.out.println(messageLog);
+                return hiddenMessage;
             }
 
         } else if (decodeMethod == 1) {
-            System.out.println("DCT decode performed");
+            long startTime = System.nanoTime();
             File file = new File(String.valueOf(path));
             FileInputStream fileInputStream = new FileInputStream(file);
             int[] coefficients = cryptoDCT.extractCoefficients(fileInputStream, (int) file.length());
             int[] bitArray = cryptoDCT.extractLSBFromCoefficientsMessage(coefficients);
             byte[] byteArray = cryptoDCT.getByteArrayDCT(bitArray);
             String messageFull = cryptoDCT.decodeDCT(byteArray);
-            String messageTrimmed = utilsGeneral.trimFront(messageFull, endCharDCT).substring(1);
-            return messageTrimmed;
+            hiddenMessage = utilsGeneral.trimFront(messageFull, endCharDCT).substring(1);
+            long endTime = System.nanoTime();
+            long duration = (endTime - startTime)/1000000;
+            messageLog = "DCT decode performed (in "+ duration +")";
+            System.out.println(messageLog);
+            return hiddenMessage;
 
         } else {
             return "Unexpected error";
@@ -132,15 +175,24 @@ public class CryptoMain {
     }
 
     public int codeMethod(BufferedImage sourceImage, String message) {
+        int charCapacityLSB, charCapacityDCT, charCapacityLSB2;
 
-        int charCapacityLSB, charCapacityDCT;
-
+        //pixels
         charCapacityLSB = sourceImage.getHeight() * sourceImage.getWidth();
+        //each pixel can hold 1 bit (8 pixels hold 1 char)
         charCapacityLSB = charCapacityLSB / 8;
+        //32 Bytes used for length (length coded in 4 Bytes (32 bits) => 32 Bytes for storage in image => 4 char)
         charCapacityLSB = charCapacityLSB - 4;
+        //one char used as a prefix (to identify which method use)
         charCapacityLSB = charCapacityLSB - 1;
 
-        int charCapacityLSB2 = charCapacityLSB*2;
+        charCapacityLSB2 = sourceImage.getHeight() * sourceImage.getWidth();
+        //each pixel can hold 2 bit (4 pixels hold 1 char)
+        charCapacityLSB2 = charCapacityLSB2 / 4;
+        //16 Bytes used for length (length coded in 4 Bytes (32 bits) => 16 Bytes for storage in image => 4 char)
+        charCapacityLSB2 = charCapacityLSB2 - 4;
+        //one char used as a prefix (to identify which method use)
+        charCapacityLSB2 = charCapacityLSB2 - 1;
 
         double height = sourceImage.getHeight();
         int intHeight = (int) Math.round(height / 8);
@@ -149,6 +201,8 @@ public class CryptoMain {
         charCapacityDCT = (intHeight * intWidth);
         charCapacityDCT = charCapacityDCT * 3;
         charCapacityDCT = charCapacityDCT / 8;
+        //one char used as a prefix (to identify which method use)
+        //one char used as a suffix (to identify when end)
         charCapacityDCT = charCapacityDCT - 2;
 
         if (message.length() > charCapacityLSB2) {
@@ -171,7 +225,7 @@ public class CryptoMain {
                 //dct
                 return 1;
             } else {
-                //lsb
+                //lsb or lsb2
                 return 0;
             }
         } else {
@@ -179,7 +233,7 @@ public class CryptoMain {
                 //dct
                 return 1;
             } else {
-                //lsb
+                //lsb or lsb2
                 return 0;
             }
         }
@@ -199,6 +253,10 @@ public class CryptoMain {
     public String decideCodeOrDecode(String pathString) throws IOException {
         int decodeMethod = decodeMethod(pathString);
         String firstChar = "";
+
+        if (utilsGeneral.isImageLoadedFromURL(pathString) || pathString.isEmpty()) {
+            return "code";
+        }
 
         if (decodeMethod == 0) {
             //get first char using LSB
@@ -222,8 +280,7 @@ public class CryptoMain {
             firstChar = cryptoDCT.decodeDCT(byteArray);
         }
 
-
-        if (firstChar.equals(startChar)) {
+        if (firstChar.equals(startChar) ) {
             return "decode";
         } else {
             return "code";

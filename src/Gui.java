@@ -19,6 +19,7 @@ public class Gui extends Canvas {
     private JLabel iconLabel;
     private JLabel imageInfoLabel;
     private JButton anotherImageButton;
+    private JLabel performedMethodLabel;
     private String path = "https://picsum.photos/400/200";
     private BufferedImage placeholderBufferedImage;
     private CryptoMain cryptoMain = new CryptoMain();
@@ -40,16 +41,46 @@ public class Gui extends Canvas {
         });
 
         performSteganographyButton.addActionListener(e -> {
-            Main main = new Main();
             try {
                 if (messageTextArea.getText().startsWith("|") || messageTextArea.getText().endsWith("°")) {
                     messageTextArea.setText("");
-                    JOptionPane.showMessageDialog(jPanel, "This is not allowed character to start/end your message");
+                    JOptionPane.showMessageDialog(jPanel,
+                            "This is not allowed character to start/end your message");
                 } else {
-                    if(filePathTextArea.getText().isEmpty()) {
-                        main.performSteganography(path, placeholderBufferedImage, messageTextArea.getText());
-                    } else {
-                        main.performSteganography(filePathTextArea.getText(),null, messageTextArea.getText());
+
+                    String decide = cryptoMain.decideCodeOrDecode(filePathTextArea.getText());
+                    if (decide == "decode") {
+                        if (!utilsGeneral.isImageLoadedFromURL(filePathTextArea.getText())) {
+                            String message = cryptoMain.decode(filePathTextArea.getText());
+                            messageTextArea.setText(message);
+                            performedMethodLabel.setText(cryptoMain.getMessageLog());
+                        } else {
+                            System.out.println("URL address cannot be decoded yet");
+                        }
+                    }
+
+                    else {
+                        BufferedImage sourceImage;
+                        if(!filePathTextArea.getText().isEmpty()) {
+
+                            if (utilsGeneral.isImageLoadedFromURL(filePathTextArea.getText())) {
+                                sourceImage = utilsImage.readImageURL(filePathTextArea.getText());
+                            } else {
+                                sourceImage = utilsImage.readImageFile(filePathTextArea.getText());
+                            }
+                            int cryptoMode = cryptoMain.codeMethod(sourceImage, messageTextArea.getText());
+
+                            cryptoMain.code(cryptoMode, filePathTextArea.getText(), null,
+                                    messageTextArea.getText());
+                            performedMethodLabel.setText(cryptoMain.getMessageLog());
+
+                        } else {
+                            int cryptoMode = cryptoMain.codeMethod(placeholderBufferedImage, messageTextArea.getText());
+                            cryptoMain.code(cryptoMode, filePathTextArea.getText(), placeholderBufferedImage,
+                                    messageTextArea.getText());
+                            String msg = cryptoMain.getMessageLog();
+                            performedMethodLabel.setText(cryptoMain.getMessageLog());
+                        }
                     }
                 }
             } catch (Exception ex) {
@@ -66,20 +97,20 @@ public class Gui extends Canvas {
                     try {
                         ImageIcon imageIcon = new ImageIcon(utilsImage.readImageFile(filePathTextArea.getText()));
                         Image image = imageIcon.getImage();
-                        Image scaledImage = image.getScaledInstance(400, 200,  java.awt.Image.SCALE_SMOOTH);
+                        Image scaledImage = image.getScaledInstance(400, 200,
+                                java.awt.Image.SCALE_SMOOTH);
                         iconLabel.setIcon(new ImageIcon(scaledImage));
 
-                        //show hidden message if is
                         String decide = cryptoMain.decideCodeOrDecode(filePathTextArea.getText());
                         if (decide == "decode") {
                             if (!utilsGeneral.isImageLoadedFromURL(filePathTextArea.getText())) {
                                 String message = cryptoMain.decode(filePathTextArea.getText());
                                 messageTextArea.setText(message);
+                                performedMethodLabel.setText(cryptoMain.getMessageLog());
                             } else {
                                 System.out.println("URL address cannot be decoded yet");
                             }
                         }
-
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }

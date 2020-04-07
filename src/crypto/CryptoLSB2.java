@@ -63,7 +63,6 @@ public class CryptoLSB2 {
         return image;
     }
 
-    //edited
     public BufferedImage addTextToImage(BufferedImage image, String message) {
         initialShift = 16;
         byte[] imageByteArray = this.utilsImage.getBytesFromImage(image);

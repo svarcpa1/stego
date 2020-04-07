@@ -115,15 +115,13 @@ public class JpegEncoder extends Frame {
 
         //---
 
-        byte currentByte;
-        int nBytes = message.length;
-        int iByte = 0;
-        int iBit = 7;
-        if (nBytes > 0) {
-            currentByte = message[0];
-        } else {
-            currentByte = (byte) 0;
-        }
+        int messageBytes, tmpByte, tmpBit;
+
+        messageBytes = message.length;
+        tmpByte = 0;
+        tmpBit = 7;
+
+        byte currentByte = messageBytes > 0 ? message[0] : (byte) 0;
 
         //---
 
@@ -177,14 +175,14 @@ public class JpegEncoder extends Frame {
                             dctArray2 = dct.forwardDCT(dctArray1);
                             dctArray3 = dct.quantizeBlock(dctArray2, JpegObj.QtableNumber[comp]);
                             //---
-                            if (iByte < nBytes) {
-                                int bit = (currentByte >> iBit) & 1;
-                                iBit--;
-                                if (iBit == -1) {
-                                    iBit = 7;
-                                    iByte++;
-                                    if (iByte < nBytes) {
-                                        currentByte = message[iByte];
+                            if (tmpByte < messageBytes) {
+                                int bit = (currentByte >> tmpBit) & 1;
+                                tmpBit--;
+                                if (tmpBit == -1) {
+                                    tmpBit = 7;
+                                    tmpByte++;
+                                    if (tmpByte < messageBytes) {
+                                        currentByte = message[tmpByte];
                                     }
                                 }
                                 dctArray3[23] = (dctArray3[23] & 0xfffffffe) | bit;

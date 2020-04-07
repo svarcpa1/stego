@@ -3,10 +3,7 @@ package utils;
 public class UtilsText {
 
     public byte[] getBytesFromText(String text) {
-        //TODO simplify
-        byte[] bytesFromString;
-        bytesFromString = text.getBytes();
-        return bytesFromString;
+        return text.getBytes();
     }
 
     public byte[] getTextLength(int textLength) {
