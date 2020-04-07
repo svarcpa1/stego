@@ -100,6 +100,8 @@ public class Gui extends Canvas {
                         Image scaledImage = image.getScaledInstance(400, 200,
                                 java.awt.Image.SCALE_SMOOTH);
                         iconLabel.setIcon(new ImageIcon(scaledImage));
+                        imageInfoLabel.setText("size: "+ image.getWidth(jFileChooser) +"x"+
+                                        image.getHeight(jFileChooser) +"px");
 
                         String decide = cryptoMain.decideCodeOrDecode(filePathTextArea.getText());
                         if (decide == "decode") {
