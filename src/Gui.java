@@ -72,14 +72,15 @@ public class Gui extends Canvas {
 
                             cryptoMain.code(cryptoMode, filePathTextArea.getText(), null,
                                     messageTextArea.getText());
-                            performedMethodLabel.setText(cryptoMain.getMessageLog());
+                            performedMethodLabel.setText(cryptoMain.getMessageLog() + " length was "+
+                                    cryptoMain.getMessageLength());
 
                         } else {
                             int cryptoMode = cryptoMain.codeMethod(placeholderBufferedImage, messageTextArea.getText());
                             cryptoMain.code(cryptoMode, filePathTextArea.getText(), placeholderBufferedImage,
                                     messageTextArea.getText());
-                            String msg = cryptoMain.getMessageLog();
-                            performedMethodLabel.setText(cryptoMain.getMessageLog());
+                            performedMethodLabel.setText(cryptoMain.getMessageLog() + " length was "+
+                                    cryptoMain.getMessageLength());
                         }
                     }
                 }
@@ -108,7 +109,8 @@ public class Gui extends Canvas {
                             if (!utilsGeneral.isImageLoadedFromURL(filePathTextArea.getText())) {
                                 String message = cryptoMain.decode(filePathTextArea.getText());
                                 messageTextArea.setText(message);
-                                performedMethodLabel.setText(cryptoMain.getMessageLog());
+                                performedMethodLabel.setText(cryptoMain.getMessageLog() + " length was "+
+                                        cryptoMain.getMessageLength());
                             } else {
                                 System.out.println("URL address cannot be decoded yet");
                             }

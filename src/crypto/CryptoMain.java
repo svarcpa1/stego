@@ -20,6 +20,11 @@ public class CryptoMain {
     private String startChar = "|";
     private boolean lsb2 = false;
     private String messageLog = "";
+    private int messageLength;
+
+    public int getMessageLength() {
+        return messageLength;
+    }
 
     public String getMessageLog() {
         return messageLog;
@@ -179,16 +184,16 @@ public class CryptoMain {
 
         //pixels
         charCapacityLSB = sourceImage.getHeight() * sourceImage.getWidth();
-        //each pixel can hold 1 bit (8 pixels hold 1 char)
-        charCapacityLSB = charCapacityLSB / 8;
+        //each pixel can hold 3 bit (8 pixels hold 1 char)
+        charCapacityLSB = (charCapacityLSB / 8) *3;
         //32 Bytes used for length (length coded in 4 Bytes (32 bits) => 32 Bytes for storage in image => 4 char)
         charCapacityLSB = charCapacityLSB - 4;
         //one char used as a prefix (to identify which method use)
         charCapacityLSB = charCapacityLSB - 1;
 
         charCapacityLSB2 = sourceImage.getHeight() * sourceImage.getWidth();
-        //each pixel can hold 2 bit (4 pixels hold 1 char)
-        charCapacityLSB2 = charCapacityLSB2 / 4;
+        //each pixel can hold 6 bit (4 pixels hold 1 char)
+        charCapacityLSB2 = (charCapacityLSB2 / 4) * 3;
         //16 Bytes used for length (length coded in 4 Bytes (32 bits) => 16 Bytes for storage in image => 4 char)
         charCapacityLSB2 = charCapacityLSB2 - 4;
         //one char used as a prefix (to identify which method use)
@@ -205,18 +210,20 @@ public class CryptoMain {
         //one char used as a suffix (to identify when end)
         charCapacityDCT = charCapacityDCT - 2;
 
-        if (message.length() > charCapacityLSB2) {
+        messageLength = message.length();
+        if (messageLength > charCapacityLSB2) {
             return 100;
-        } else if (message.length() > charCapacityLSB) {
+        } else if (messageLength > charCapacityLSB) {
             //use LSB2
             return 3;
-        } else if (message.length() > charCapacityDCT) {
+        } else if (messageLength > charCapacityDCT) {
             //use LSB
             return 0;
         } else {
             //use DCT
             return 1;
         }
+
     }
 
     public int decodeMethod(String path) {
