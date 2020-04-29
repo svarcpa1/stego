@@ -38,6 +38,7 @@ public class Gui extends Canvas {
             ImageIcon placeHolder1 = new ImageIcon(placeholderBufferedImage);
             filePathTextArea.setText("");
             iconLabel.setIcon(placeHolder1);
+            imageInfoLabel.setText("size: 200x200px");
         });
 
         performSteganographyButton.addActionListener(e -> {

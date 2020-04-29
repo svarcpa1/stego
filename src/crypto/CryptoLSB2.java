@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import utils.UtilsGeneral;
 import utils.UtilsImage;
 import utils.UtilsText;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -53,10 +52,10 @@ public class CryptoLSB2 {
         byte[] textByteArray = utilsText.getBytesFromText(message);
         byte[] textLengthByteArray = utilsText.getTextLength(textByteArray.length);
 
-        for (int i = 0; i < textLengthByteArray.length; i++) {
-            for (int j = 6; j >= 0; j=j-2) {
+        for (byte b : textLengthByteArray) {
+            for (int j = 6; j >= 0; j = j - 2) {
                 imageByteArray[initialShift] =
-                        (byte) ((imageByteArray[initialShift] & 0xFC) | ((int) textLengthByteArray[i] >>> j) & 3);
+                        (byte) ((imageByteArray[initialShift] & 0xFC) | ((int) b >>> j) & 3);
                 initialShift++;
             }
         }

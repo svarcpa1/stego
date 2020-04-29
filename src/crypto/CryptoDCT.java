@@ -1,7 +1,6 @@
 package crypto;
 
 import jpegDecoder.HuffmanDecode;
-
 import java.io.IOException;
 import java.io.InputStream;
 

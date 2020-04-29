@@ -7,7 +7,6 @@ public class UtilsText {
     }
 
     public byte[] getTextLength(int textLength) {
-        //TODO simplify
         byte byte0 = (byte) ((textLength & 0x000000FF));
         byte byte1 = (byte) ((textLength & 0x0000FF00) >>> 8);
         byte byte2 = (byte) ((textLength & 0x00FF0000) >>> 16);

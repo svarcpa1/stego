@@ -15,10 +15,8 @@ public class UtilsGeneral {
     }
 
     public boolean isImageLoadedFromURL(String pathString) {
-        if (pathString.contains("https://") || pathString.contains("http://")) {
-            return true;
-        } else {
-            return false;
-        }
+        return pathString.contains("https://") || pathString.contains("http://") ||
+                pathString.contains("www.") || pathString.contains(".com") ||
+                pathString.contains(".cz");
     }
 }

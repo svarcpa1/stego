@@ -3,7 +3,6 @@ package crypto;
 import jpegEncoder.JpegEncoder;
 import utils.UtilsGeneral;
 import utils.UtilsImage;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -223,7 +222,6 @@ public class CryptoMain {
             //use DCT
             return 1;
         }
-
     }
 
     public int decodeMethod(String path) {
